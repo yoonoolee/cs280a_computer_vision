@@ -47,6 +47,7 @@ h1, .project-title {
 }
 
 .site-nav a {
+    display: inline-block;
     font-family: var(--ui-font);
     font-weight: 400;
     color: #1a1a1a;
@@ -56,6 +57,11 @@ h1, .project-title {
     padding: 4px 0;
     text-decoration: none;
     white-space: nowrap;
+    transition: transform 0.15s ease;
+}
+
+.site-nav a:hover {
+    transform: scale(1.1);
 }
 
 .site-nav a:hover,
@@ -221,9 +227,11 @@ h2.part-title {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     text-decoration: none;
+    transition: transform 0.15s ease;
 }
 
 .site-footer a:hover {
+    transform: scale(1.1);
     -webkit-text-stroke: 0.6px currentColor;
     text-stroke: 0.6px currentColor;
 }
