@@ -7,7 +7,7 @@
     --green: #4a7c3f;
     --green-dark: #345b2b;
     --ink: #2b2320;
-    --ui-font: 'Lora', Georgia, 'Times New Roman', serif;
+    --ui-font: 'Instrument Serif', Georgia, 'Times New Roman', serif;
 }
 
 * {
@@ -51,8 +51,7 @@ h1, .project-title {
     font-family: var(--ui-font);
     font-weight: 400;
     color: #1a1a1a;
-    font-size: 16px;
-    letter-spacing: 0.2px;
+    font-size: 19px;
     line-height: 1.4;
     padding-bottom: 4px;
     text-decoration: none;
@@ -77,7 +76,7 @@ h1, .project-title {
 }
 
 .site-nav a.active {
-    font-weight: 700;
+    font-style: italic;
 }
 
 /* ---------- Layout ---------- */
@@ -147,6 +146,7 @@ h2.part-title {
     padding: 10px 14px;
     border: 3px solid var(--green-dark);
     margin: 2em 0 1em;
+    white-space: nowrap;
 }
 
 .gallery {
@@ -230,14 +230,14 @@ h2.part-title {
 .site-footer a {
     display: inline-block;
     font-family: var(--ui-font);
-    font-weight: 500;
+    font-weight: 400;
     color: #1a1a1a;
-    font-size: 13px;
+    font-size: 16px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     text-decoration: none;
 }
 
 .site-footer a:hover {
-    font-weight: 800;
+    font-style: italic;
 }
