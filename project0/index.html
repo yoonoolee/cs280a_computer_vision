@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;900&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -34,25 +34,56 @@
                 <img src="images/cs280a_proj0_part1_pic1.jpg" alt="Part 1 photo 1">
                 <img src="images/cs280a_proj0_part1_pic2.jpg" alt="Part 1 photo 2">
             </div>
-            <p class="answer">For the first photo the camera was close to my face and not zoomed in at all. The features that are closer to the camera like my nose and forehead look bigger and pushed forward, while the top of my head and that hair space look pushed back and squished down. For the second photo the camera was much farther away and zoomed in, so all my features are about the same distance from the camera and look even and natural.</p>
+            <p class="answer typewriter">For the first photo the camera was close to my face and not zoomed in at all. The features that are closer to the camera like my nose and forehead look bigger and pushed forward, while the top of my head and that hair space look pushed back and squished down. For the second photo the camera was much farther away and zoomed in, so all my features are about the same distance from the camera and look even and natural.</p>
 
             <h2 class="part-title">Part 2: Architectural Perspective Compression</h2>
             <div class="gallery">
                 <img src="images/cs280a_proj0_part2_pic1.jpg" alt="Part 2 photo 1">
                 <img src="images/cs280a_proj0_part2_pic2.jpg" alt="Part 2 photo 2">
             </div>
-            <p class="answer">For the first photo the camera was close to the building and not zoomed in, so the columns closest to the camera look much bigger than the ones farther down the building. For the second photo the camera was much farther away and zoomed in, so the columns all look closer in size and the building looks flatter.</p>
+            <p class="answer typewriter">For the first photo the camera was close to the building and not zoomed in, so the columns closest to the camera look much bigger than the ones farther down the building. For the second photo the camera was much farther away and zoomed in, so the columns all look closer in size and the building looks flatter.</p>
 
             <h2 class="part-title">Part 3: The Dolly Zoom</h2>
             <div class="gif-wrap">
                 <img src="images/cs280a_proj0_part3.gif" alt="Part 3 dolly zoom animation">
             </div>
-            <p class="caption">Meet bebybean. He's a great model ♥</p>
+            <p class="caption typewriter">Meet bebybean :)</p>
         </div>
     </main>
 
     <footer class="site-footer">
         <a href="https://github.com/yoonoolee/cs280a_computer_vision" target="_blank" rel="noopener">GitHub</a>
     </footer>
+
+    <script>
+        function typeOut(el) {
+            const text = el.textContent;
+            el.textContent = '';
+            const cursor = document.createElement('span');
+            cursor.className = 'blink';
+            cursor.textContent = '_';
+            let i = 0;
+            function step() {
+                el.textContent = text.slice(0, i + 1);
+                el.appendChild(cursor);
+                i++;
+                if (i < text.length) {
+                    setTimeout(step, 18);
+                }
+            }
+            step();
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    observer.unobserve(entry.target);
+                    typeOut(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+
+        document.querySelectorAll('.typewriter').forEach((el) => observer.observe(el));
+    </script>
 </body>
 </html>
