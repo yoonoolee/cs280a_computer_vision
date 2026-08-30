@@ -245,7 +245,6 @@ h2.part-title {
     padding: 10px 14px;
     border: 3px solid var(--green-dark);
     margin: 2em 0 1em;
-    white-space: nowrap;
 }
 
 .gallery {
@@ -342,4 +341,42 @@ h2.part-title {
     transform: scale(1.1);
     -webkit-text-stroke: 0.6px currentColor;
     text-stroke: 0.6px currentColor;
+}
+
+/* ---------- Print / save-as-PDF ---------- */
+@page {
+    margin: 0.6in;
+}
+
+@media print {
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .site-nav {
+        position: static;
+        gap: 20px;
+        box-shadow: none;
+        margin-top: 0;
+    }
+
+    .site-footer {
+        position: static;
+        margin: 32px 0 0;
+        text-align: right;
+    }
+
+    h2.part-title {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+
+    .gallery,
+    .gif-wrap,
+    .answer,
+    .caption {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
 }

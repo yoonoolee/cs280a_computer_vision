@@ -59,11 +59,15 @@
         function typeOut(el) {
             const text = el.textContent;
             document.fonts.ready.then(() => {
-                el.style.width = el.getBoundingClientRect().width + 'px';
-                el.textContent = '';
                 const cursor = document.createElement('span');
                 cursor.className = 'blink';
                 cursor.textContent = '_';
+
+                el.textContent = text;
+                el.appendChild(cursor);
+                el.style.width = el.getBoundingClientRect().width + 'px';
+                el.textContent = '';
+
                 let i = 0;
                 function step() {
                     el.textContent = text.slice(0, i + 1);
