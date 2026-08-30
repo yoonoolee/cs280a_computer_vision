@@ -187,6 +187,15 @@ h2.part-title {
     text-align: left;
 }
 
+.caption {
+    max-width: 640px;
+    margin: 0.6em auto 0;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+    text-align: center;
+}
+
 .gif-wrap {
     display: flex;
     justify-content: center;
