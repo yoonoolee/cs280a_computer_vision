@@ -45,7 +45,7 @@ h1, .coming-soon h1, .project-title {
     font-family: var(--ui-font);
     font-weight: 400;
     color: #1a1a1a;
-    font-size: 14px;
+    font-size: 18px;
     letter-spacing: 0.7px;
     text-transform: uppercase;
     line-height: 1.4;
