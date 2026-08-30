@@ -1,49 +1,234 @@
+:root {
+    --wood-dark: #4b2e1e;
+    --wood: #6b4226;
+    --wood-light: #9c6a3e;
+    --cream: #f4e4c1;
+    --cream-dark: #e6cf9c;
+    --green: #4a7c3f;
+    --green-dark: #345b2b;
+    --ink: #2b2320;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Georgia, 'Times New Roman', serif;
-    max-width: 800px;
-    margin: 80px auto;
-    padding: 0 20px;
-    color: #222;
-    line-height: 1.6;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: var(--ink);
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--cream);
+    background-image:
+        repeating-conic-gradient(var(--cream) 0% 25%, var(--cream-dark) 0% 50%);
+    background-size: 40px 40px;
 }
 
-h1 {
-    font-size: 1.8em;
-    margin-bottom: 0.2em;
+h1, h2, nav a, .pixel-footer a, .coming-soon h1 {
+    font-family: 'Press Start 2P', monospace;
 }
 
-.byline {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 2em;
+/* ---------- Nav ---------- */
+.pixel-nav {
+    background: var(--wood-dark);
+    border-bottom: 6px solid var(--wood-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav li {
-    margin: 0.4em 0;
-}
-
-nav a {
+.pixel-nav a {
+    color: var(--cream);
+    font-size: 10px;
+    line-height: 1;
+    padding: 10px 12px;
     text-decoration: none;
-    color: #1a5276;
-    font-size: 1.1em;
+    border: 3px solid var(--wood);
+    background: var(--wood);
+    white-space: nowrap;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.pixel-nav a:hover {
+    background: var(--green);
+    border-color: var(--green-dark);
+    color: #fff;
+}
+
+.pixel-nav a.active {
+    background: var(--cream);
+    color: var(--wood-dark);
+    border-color: var(--cream-dark);
+}
+
+/* ---------- Layout ---------- */
+main {
+    max-width: 900px;
+    margin: 40px auto 120px;
+    padding: 0 20px;
+}
+
+.panel {
+    background: var(--cream);
+    border: 8px solid var(--wood);
+    outline: 4px solid var(--wood-dark);
+    outline-offset: -14px;
+    padding: 28px;
 }
 
 a.back {
     display: inline-block;
-    margin-bottom: 2em;
-    color: #1a5276;
+    margin-bottom: 1.5em;
+    color: var(--wood-dark);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
     text-decoration: none;
 }
 
 a.back:hover {
     text-decoration: underline;
+}
+
+/* ---------- Hero / character ---------- */
+.hero {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.hero img.sprite {
+    image-rendering: pixelated;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 18px;
+    display: block;
+    border: 6px solid var(--wood-dark);
+    background: var(--cream-dark);
+    padding: 10px;
+}
+
+.hero h1 {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--wood-dark);
+    margin: 0.4em 0;
+}
+
+.hero .byline {
+    font-family: 'VT323', monospace;
+    font-size: 26px;
+    margin: 0;
+}
+
+.hero .date {
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    color: var(--wood);
+    margin-top: 4px;
+}
+
+/* ---------- Part sections ---------- */
+h2.part-title {
+    font-size: 13px;
+    line-height: 1.7;
+    background: var(--green);
+    color: #fff;
+    display: inline-block;
+    padding: 10px 14px;
+    border: 3px solid var(--green-dark);
+    margin: 2em 0 1em;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 1em 0;
+}
+
+.gallery img {
+    max-width: 100%;
+    width: 340px;
+    height: auto;
+    border: 5px solid var(--wood-dark);
+    display: block;
+}
+
+.gif-wrap img {
+    max-width: 100%;
+    width: 400px;
+    border: 5px solid var(--wood-dark);
+    display: block;
+}
+
+/* ---------- Home nav list (project links) ---------- */
+.project-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 1.5em;
+}
+
+.project-links a {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--cream);
+    background: var(--wood);
+    border: 3px solid var(--wood-dark);
+    padding: 12px 14px;
+    text-decoration: none;
+}
+
+.project-links a:hover {
+    background: var(--green);
+    border-color: var(--green-dark);
+}
+
+/* ---------- Coming soon ---------- */
+.coming-soon {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.coming-soon h1 {
+    font-size: 22px;
+    color: var(--wood-dark);
+}
+
+.coming-soon .blink {
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* ---------- Footer ---------- */
+.pixel-footer {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 10;
+}
+
+.pixel-footer a {
+    display: inline-block;
+    background: var(--wood-dark);
+    color: var(--cream);
+    font-size: 10px;
+    padding: 10px 12px;
+    border: 3px solid var(--wood-light);
+    text-decoration: none;
+}
+
+.pixel-footer a:hover {
+    background: var(--green);
+    border-color: var(--green-dark);
 }
