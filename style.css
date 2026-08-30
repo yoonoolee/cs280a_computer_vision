@@ -257,7 +257,7 @@ h2.part-title {
 
 .gallery img {
     max-width: 100%;
-    width: 340px;
+    width: 300px;
     height: auto;
     border: 5px solid var(--wood-dark);
     display: block;
