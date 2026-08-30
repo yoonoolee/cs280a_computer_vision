@@ -58,21 +58,23 @@
     <script>
         function typeOut(el) {
             const text = el.textContent;
-            el.style.width = el.getBoundingClientRect().width + 'px';
-            el.textContent = '';
-            const cursor = document.createElement('span');
-            cursor.className = 'blink';
-            cursor.textContent = '_';
-            let i = 0;
-            function step() {
-                el.textContent = text.slice(0, i + 1);
-                el.appendChild(cursor);
-                i++;
-                if (i < text.length) {
-                    setTimeout(step, 60);
+            document.fonts.ready.then(() => {
+                el.style.width = el.getBoundingClientRect().width + 'px';
+                el.textContent = '';
+                const cursor = document.createElement('span');
+                cursor.className = 'blink';
+                cursor.textContent = '_';
+                let i = 0;
+                function step() {
+                    el.textContent = text.slice(0, i + 1);
+                    el.appendChild(cursor);
+                    i++;
+                    if (i < text.length) {
+                        setTimeout(step, 60);
+                    }
                 }
-            }
-            step();
+                step();
+            });
         }
 
         const observer = new IntersectionObserver((entries) => {
