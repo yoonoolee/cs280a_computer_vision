@@ -60,7 +60,8 @@ h1, .project-title {
 
 .site-nav a:hover,
 .site-nav a.active {
-    font-weight: 700;
+    -webkit-text-stroke: 0.6px currentColor;
+    text-stroke: 0.6px currentColor;
 }
 
 /* ---------- Layout ---------- */
@@ -223,5 +224,6 @@ h2.part-title {
 }
 
 .site-footer a:hover {
-    font-weight: 700;
+    -webkit-text-stroke: 0.6px currentColor;
+    text-stroke: 0.6px currentColor;
 }
