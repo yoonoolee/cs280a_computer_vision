@@ -8,6 +8,21 @@
     --green-dark: #345b2b;
     --ink: #2b2320;
     --ui-font: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+
+    /* Nav + footer theme knobs. The bar's shape and behaviour are fixed in the
+       .site-nav rules below; a page theme recolours it by overriding these on
+       its body class (see body.p0 here, body.p1 in project1/project1.css).
+       These defaults are the homepage look. */
+    --nav-font: var(--ui-font);
+    --nav-size: 19px;
+    --nav-tracking: 1px;
+    --nav-case: none;
+    --nav-bg: #ffffff;
+    --nav-fg: #1a1a1a;
+    --nav-fg-active: #1a1a1a;
+    --nav-stroke: 0.6px;
+    --nav-shadow: 0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
+    --footer-size: 16px;
 }
 
 * {
@@ -27,9 +42,9 @@ h1, .project-title {
     font-family: 'Press Start 2P', monospace;
 }
 
-/* ---------- Nav (plain, generic - shared across every page, not the pixel theme) ---------- */
+/* ---------- Nav (shared across every page; shape is fixed here, look comes from the --nav-* knobs) ---------- */
 .site-nav {
-    background: #ffffff;
+    background: var(--nav-bg);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -40,7 +55,7 @@ h1, .project-title {
     margin: 24px auto 0;
     padding: 12px 32px;
     border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--nav-shadow);
     position: sticky;
     top: 16px;
     z-index: 10;
@@ -48,16 +63,17 @@ h1, .project-title {
 
 .site-nav a {
     display: inline-block;
-    font-family: var(--ui-font);
+    font-family: var(--nav-font);
     font-weight: 400;
-    color: #1a1a1a;
-    font-size: 19px;
-    letter-spacing: 1px;
-    line-height: 1.4;
+    color: var(--nav-fg);
+    font-size: var(--nav-size);
+    letter-spacing: var(--nav-tracking);
+    text-transform: var(--nav-case);
+    line-height: 27px; /* fixed, not relative to font size, so the bar is the same height in every theme */
     padding: 4px 0;
     text-decoration: none;
     white-space: nowrap;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .site-nav a:hover {
@@ -66,8 +82,22 @@ h1, .project-title {
 
 .site-nav a:hover,
 .site-nav a.active {
-    -webkit-text-stroke: 0.6px currentColor;
-    text-stroke: 0.6px currentColor;
+    color: var(--nav-fg-active);
+    -webkit-text-stroke: var(--nav-stroke) currentColor;
+    text-stroke: var(--nav-stroke) currentColor;
+}
+
+/* ---------- Project 0 nav: pixel theme ---------- */
+body.p0 {
+    --nav-font: 'Press Start 2P', monospace;
+    --nav-size: 11px;
+    --nav-tracking: 0;
+    --nav-bg: var(--cream);
+    --nav-fg: var(--wood-dark);
+    --nav-fg-active: var(--green-dark);
+    --nav-stroke: 0; /* the pixel font is already heavy; active/hover is signalled by colour */
+    --nav-shadow: 0 0 0 3px var(--wood-dark), 6px 6px 0 3px rgba(75, 46, 30, 0.35); /* hard-edged, no blur */
+    --footer-size: 10px;
 }
 
 /* ---------- Layout ---------- */
@@ -317,7 +347,7 @@ h2.part-title {
     50% { opacity: 0; }
 }
 
-/* ---------- Footer (plain, generic - shared across every page, not the pixel theme) ---------- */
+/* ---------- Footer (shared across every page; follows the nav's font and colours) ---------- */
 .site-footer {
     position: fixed;
     right: 20px;
@@ -327,20 +357,21 @@ h2.part-title {
 
 .site-footer a {
     display: inline-block;
-    font-family: var(--ui-font);
+    font-family: var(--nav-font);
     font-weight: 400;
-    color: #1a1a1a;
-    font-size: 16px;
+    color: var(--nav-fg);
+    font-size: var(--footer-size);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     text-decoration: none;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .site-footer a:hover {
     transform: scale(1.1);
-    -webkit-text-stroke: 0.6px currentColor;
-    text-stroke: 0.6px currentColor;
+    color: var(--nav-fg-active);
+    -webkit-text-stroke: var(--nav-stroke) currentColor;
+    text-stroke: var(--nav-stroke) currentColor;
 }
 
 /* ---------- Print / save-as-PDF ---------- */

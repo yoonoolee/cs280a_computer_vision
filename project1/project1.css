@@ -1,0 +1,519 @@
+/* ============================================================
+   Project 1 — period print / Art Nouveau journal
+   Loaded after ../style.css; only restyles this page's content.
+   The shared nav and footer keep their shape from style.css; the
+   --nav-* knobs on body.p1 below give them this page's type and colours.
+   ============================================================ */
+:root {
+    --paper: #f6efe0;
+    --ink: #2a2118;
+    --oxblood: #7a1f1f;
+    --gold: #b8923a;
+    --muted: #6b5c48;
+    --hair: #d8ccb2;
+    --display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --text: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --mono: 'Courier Prime', 'Courier New', Courier, monospace;
+}
+
+/* paint the root too, so nothing white shows above or below the body */
+html:has(body.p1) {
+    background: var(--paper);
+}
+
+body.p1 {
+    display: flow-root; /* keeps the nav's and main's margins inside body, so body's paper reaches the page edges */
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 20px;
+    line-height: 1.5;
+    font-variant-numeric: lining-nums;
+
+    /* nav + footer: masthead type on a lighter paper, ringed by a double rule like the masthead */
+    --nav-font: var(--display);
+    --nav-size: 14px;
+    --nav-tracking: .16em;
+    --nav-case: uppercase;
+    --nav-bg: #fbf7ed;
+    --nav-fg: var(--ink);
+    --nav-fg-active: var(--oxblood);
+    --nav-stroke: 0.5px;
+    --nav-shadow:
+        0 0 0 1px var(--ink),
+        0 0 0 3px var(--nav-bg),
+        0 0 0 4px var(--ink),
+        0 12px 24px -12px rgba(42, 33, 24, 0.5);
+    --footer-size: 12px;
+}
+
+body.p1 main.journal {
+    max-width: none;
+    margin: 36px 0 120px;
+    padding: 0 48px;
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+    text-align: center;
+    border-top: 3px double var(--ink);
+    border-bottom: 3px double var(--ink);
+    padding: 26px 12px 22px;
+    margin-bottom: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.masthead .eyebrow {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+}
+
+.masthead .project-label {
+    margin: 4px 0 0;
+    font-family: var(--display);
+    font-size: 14px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.masthead .title {
+    margin: 2px 0 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 1.1;
+    text-wrap: balance;
+}
+
+.masthead .subtitle {
+    margin: 0;
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 23px;
+    text-wrap: balance;
+}
+
+.masthead .byline {
+    margin: 8px 0 0;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--muted);
+}
+
+
+/* ---------- Running text ---------- */
+.journal p,
+.journal ol,
+.journal ul {
+    margin: 0 0 0.8em;
+}
+
+.journal ol,
+.journal ul {
+    padding-left: 1.6em;
+}
+
+.journal li {
+    margin: 0.3em 0;
+}
+
+.journal li::marker {
+    color: var(--oxblood);
+    font-weight: 600;
+}
+
+.journal a {
+    color: var(--oxblood);
+    text-decoration: underline;
+    text-decoration-color: var(--gold);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.journal a:hover {
+    text-decoration-color: var(--oxblood);
+}
+
+.journal a:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.journal i,
+.journal em {
+    font-style: italic;
+}
+
+.journal b,
+.journal strong {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 0.86em;
+    font-variant: small-caps;
+    letter-spacing: .04em;
+    color: var(--oxblood);
+}
+
+.journal code {
+    font-family: var(--mono);
+    font-size: 0.8em;
+    color: var(--ink);
+}
+
+/* drop cap on the first paragraph of each part */
+.journal p.lede::first-letter {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 3.4em;
+    line-height: 0.78;
+    float: left;
+    color: var(--oxblood);
+    margin: 0.09em 0.12em 0 0;
+}
+
+/* ---------- Section structure ---------- */
+.part {
+    margin-top: 64px;
+}
+
+/* one spread: figures left, prose right */
+.row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 40px 56px;
+    align-items: start;
+    margin-top: 28px;
+}
+
+.row > .figs,
+.row > .text {
+    min-width: 0;
+}
+
+.row > .text > :first-child {
+    margin-top: 0;
+}
+
+.row > .text > :last-child {
+    margin-bottom: 0;
+}
+
+.row > .text h3.sub-title {
+    margin-top: 32px;
+}
+
+/* the shorter column of a spread is pinned by the script while the longer one scrolls */
+.stick {
+    position: sticky;
+    top: 96px;
+}
+
+.ornament {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 340px;
+    margin: 0 auto 26px;
+    color: var(--gold);
+    font-size: 12px;
+}
+
+.ornament::before,
+.ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gold);
+}
+
+/* style.css gives h2.part-title project0's green pixel box; undo all of it here */
+h2.part-title {
+    display: block;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--ink);
+    margin: 0 0 20px;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+h2.part-title .part-num {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+}
+
+h3.sub-title {
+    margin: 46px 0 14px;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.3;
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--oxblood);
+    text-wrap: balance;
+}
+
+h3.sub-title .sub-num {
+    font-variant: normal;
+    color: var(--gold);
+    margin-right: 12px;
+}
+
+/* ---------- Mathematics ---------- */
+/* KaTeX defaults to 1.21em, which is too heavy next to Cormorant's small x-height */
+.journal .katex {
+    font-size: 1.02em;
+}
+
+.math .katex-display .katex {
+    font-size: 1.12em;
+}
+
+.math {
+    margin: 0.6em 0;
+    padding: 0 10px;
+    overflow-x: auto;
+    font-size: 19px;
+}
+
+.math .katex-display {
+    margin: 0.35em 0;
+}
+
+/* ---------- Figures ---------- */
+.figure-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px 22px;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+}
+
+.figs .figure-grid + .figure-grid {
+    margin-top: 30px;
+}
+
+.pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.pair-title {
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    font-size: 20px;
+    text-align: center;
+}
+
+.pair-title code {
+    font-variant: normal;
+    letter-spacing: 0;
+}
+
+.pair-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 280px;
+    max-width: 560px;
+    min-width: 0;
+    margin: 0;
+    padding: 6px;
+}
+
+/* small figures: exactly three per row */
+.figure.w220 {
+    flex: 0 1 calc(33.333% - 15px);
+    max-width: 300px;
+}
+
+/* intro: the tall raw scan beside the finished picture, sized so their heights roughly match */
+.figure.scan {
+    flex: 0 0 198px;
+}
+
+.figure.hero {
+    flex: 0 1 560px;
+    max-width: 100%;
+}
+
+/* The print: a 2px ink line sits directly on the image edge (so any white or black
+   strip inside it is the scan's own border), then a paper gap, a gold line, and a
+   soft shadow so the whole matted print reads as one object lying on the page. */
+.figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+    box-shadow:
+        0 0 0 4px var(--paper),
+        0 0 0 5px var(--gold),
+        0 10px 22px -10px rgba(42, 33, 24, 0.55);
+    background: #ebe1cc; /* placeholder while a lazy image loads: cream, never white */
+}
+
+.figure figcaption {
+    margin-top: 13px;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.figure figcaption .lbl {
+    font-style: normal;
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    font-weight: 600;
+    color: var(--oxblood);
+}
+
+.figure figcaption .bad {
+    color: var(--oxblood);
+}
+
+/* the step added in this section; plain bold, not the small-caps <b> style used in running text */
+.figure figcaption b.added {
+    font-family: inherit;
+    font-size: inherit;
+    font-variant: normal;
+    letter-spacing: 0;
+    color: inherit;
+    font-weight: 700; /* italic 700 is loaded in index.html's font link for this */
+}
+
+/* ---------- Offsets tables ---------- */
+.table-wrap {
+    overflow-x: auto;
+    margin: 1em 0 1.4em;
+}
+
+.offset-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 16.5px;
+    font-variant-numeric: lining-nums tabular-nums;
+}
+
+.offset-table caption {
+    caption-side: bottom;
+    padding-top: 10px;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 62ch;
+    margin: 0 auto;
+}
+
+.offset-table th {
+    padding: 6px 10px;
+    font-variant: small-caps;
+    letter-spacing: .1em;
+    font-weight: 600;
+    border-bottom: 1px solid var(--ink);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.offset-table td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--hair);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.offset-table td:first-child {
+    text-align: left;
+}
+
+.offset-table tr.fail td,
+.offset-table tr.fail code {
+    color: var(--oxblood);
+    font-style: italic;
+}
+
+.offset-table tr.fail td:first-child::after {
+    content: ' \2020';
+}
+
+.offset-table .diff {
+    color: var(--oxblood);
+}
+
+/* ---------- Colophon ---------- */
+.colophon {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 3px double var(--ink);
+    text-align: center;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--muted);
+}
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 900px) {
+    body.p1 main.journal { padding: 0 20px; }
+    .row { grid-template-columns: 1fr; gap: 24px; }
+    .row > .text { order: -1; }
+    .stick { position: static; }
+}
+
+@media (max-width: 640px) {
+    body.p1 { font-size: 19px; }
+    .masthead .title { font-size: 34px; }
+}
+
+/* ---------- Print / save-as-PDF ---------- */
+@media print {
+    body.p1 { font-size: 15px; }
+    body.p1 main.journal { margin: 0 auto 40px; }
+    .part { margin-top: 36px; }
+    h2.part-title,
+    h3.sub-title {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+    .figure,
+    .pair,
+    .math,
+    .offset-table tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    .stick { position: static; }
+    .row { gap: 24px 32px; }
+}
