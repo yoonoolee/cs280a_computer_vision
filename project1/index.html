@@ -156,7 +156,7 @@
             <div class="text">
             <p><b>Motivation.</b> So far we assumed the three plates were exactly the R, G and B channels of an RGB image. However, that is not necessarily true.</p>
             <p><b>Approach.</b> A change of color primaries is a linear map, so I mix the channels with a \(3 \times 3\) matrix:</p>
-<div class="math">$$\begin{bmatrix} R_new \\ G_new \\ B_new \end{bmatrix} = \begin{bmatrix} 1.2 & -0.1 & -0.1 \\ -0.1 & 1.2 & -0.1 \\ -0.1 & -0.1 & 1.2 \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$</div>
+<div class="math">$$\begin{bmatrix} R_{\text{new}} \\ G_{\text{new}} \\ B_{\text{new}} \end{bmatrix} = \begin{bmatrix} 1.2 & -0.1 & -0.1 \\ -0.1 & 1.2 & -0.1 \\ -0.1 & -0.1 & 1.2 \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$</div>
             <p>The values were tuned by hand, by trial and error on a few images, and then fixed for all of them. Each output channel keeps 120% of itself and subtracts 10% of each of the other two, which undoes the leakage between filters and pushes pure colors apart. The rows sum to 1 so the map does not fight the white balance that came before it and does not shift the overall brightness.</p>
             <p><b>Results.</b> Colors get noticeably richer without changing the neutrals: the Emir's robe and the flowers on it, the harvesters' clothes, and the red cloth under the book all separate from their surroundings more.</p>
             </div>
