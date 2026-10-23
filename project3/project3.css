@@ -476,12 +476,6 @@ table.data.settings td + td {
     border-radius: 0;
 }
 
-/* ---------- Closing ---------- */
-.learned {
-    max-width: 820px;
-    margin: 0 auto;
-}
-
 /* ---------- Narrow screens ---------- */
 @media (max-width: 900px) {
     body.p3 main.flow { padding: 0 20px; }
