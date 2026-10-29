@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Avery's CS 280A Project 4</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Karla:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="project4.css">
 </head>
-<body>
+<body class="p4">
     <nav class="site-nav">
         <a href="../index.html">Home</a>
         <a href="../project0/">Project 0</a>
@@ -20,14 +23,283 @@
         <a href="../project5/">Project 5</a>
     </nav>
 
-    <main>
-        <div class="coming-soon-plain">
-            <p>Coming soon</p>
+    <main class="flow">
+        <header class="masthead">
+            <p class="eyebrow">UC Berkeley CS 280A &middot; Computer Vision and Computational Photography</p>
+            <p class="project-label">PROJECT 4</p>
+            <h1 class="title"><span>[Auto]</span>Stitching Photo Mosaics</h1>
+            <p class="byline">Avery Lee &middot; October 27, 2026</p>
+        </header>
+
+<div class="lede">
+<p>Photos taken by rotating a camera about a fixed point are related by a homography, a 3&times;3 projective transform. Once the homography between two photos is known, one photo can be warped into the other's view, and overlapping photos can be stitched into one wide mosaic. Every result is available <a href="https://github.com/yoonoolee/cs280a_computer_vision/tree/main/project4/images" target="_blank" rel="noopener">here</a>.</p>
+</div>
+
+<section class="part" id="partA">
+<div class="divider major"></div>
+<h2 class="part-title"><span class="num">PART A</span>Image Warping and Mosaicing</h2>
+<p class="part-intro">Correspondences are clicked by hand, and every warp and blend is written from scratch.</p>
+
+<section class="sub" id="a1">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">A.1</span>Shoot the Pictures</h3>
+<div class="row">
+<div class="figs">
+    <div>
+        <div class="strip">
+            <div class="frames">
+                <figure class="frame" style="--r: 0.75"><span>&#9656; library 0</span><img src="images/data/library_0.jpg" width="900" height="1200" alt="library 0, Doe Library from the left" loading="lazy"></figure>
+                <figure class="frame" style="--r: 0.75"><span>&#9656; library 1 REFERENCE</span><img src="images/data/library_1.jpg" width="900" height="1200" alt="library 1, Doe Library from the middle" loading="lazy"></figure>
+                <figure class="frame" style="--r: 0.75"><span>&#9656; library 2</span><img src="images/data/library_2.jpg" width="900" height="1200" alt="library 2, Doe Library from the right" loading="lazy"></figure>
+            </div>
         </div>
+        <p class="strip-cap">library: Doe Library</p>
+    </div>
+    <div>
+        <div class="strip">
+            <div class="frames">
+                <figure class="frame" style="--r: 0.75"><span>&#9656; rumi 0</span><img src="images/data/rumi_0.jpg" width="900" height="1200" alt="rumi 0, apartment with the laundry closet" loading="lazy"></figure>
+                <figure class="frame" style="--r: 0.75"><span>&#9656; rumi 1 REFERENCE</span><img src="images/data/rumi_1.jpg" width="900" height="1200" alt="rumi 1, apartment with the front door" loading="lazy"></figure>
+                <figure class="frame" style="--r: 0.75"><span>&#9656; rumi 2</span><img src="images/data/rumi_2.jpg" width="900" height="1200" alt="rumi 2, apartment with the kitchen counter" loading="lazy"></figure>
+            </div>
+        </div>
+        <p class="strip-cap">rumi: my apartment</p>
+    </div>
+    <div>
+        <div class="strip">
+            <div class="frames">
+                <figure class="frame" style="--r: 1.5"><span>&#9656; cmu 0</span><img src="images/data/cmu_0.jpg" width="1300" height="867" alt="cmu 0, CMU campus lawn" loading="lazy"></figure>
+                <figure class="frame" style="--r: 1.5"><span>&#9656; cmu 1</span><img src="images/data/cmu_1.jpg" width="1300" height="867" alt="cmu 1, CMU campus lawn" loading="lazy"></figure>
+                <figure class="frame" style="--r: 1.5"><span>&#9656; cmu 2 REFERENCE</span><img src="images/data/cmu_2.jpg" width="1300" height="867" alt="cmu 2, CMU campus lawn" loading="lazy"></figure>
+                <figure class="frame" style="--r: 1.5"><span>&#9656; cmu 3</span><img src="images/data/cmu_3.jpg" width="1300" height="867" alt="cmu 3, CMU campus lawn" loading="lazy"></figure>
+                <figure class="frame" style="--r: 1.5"><span>&#9656; cmu 4</span><img src="images/data/cmu_4.jpg" width="1300" height="867" alt="cmu 4, CMU campus lawn" loading="lazy"></figure>
+            </div>
+        </div>
+        <p class="strip-cap">cmu: CMU campus, from the <a href="https://github.com/ppwwyyxx/OpenPano" target="_blank" rel="noopener">OpenPano</a> example data by Yuxin Wu</p>
+    </div>
+</div>
+<div class="text">
+<p>For the transform between two photos to be a homography, the camera has to rotate about its center of projection without moving. I held the phone in place and turned it between shots, with about half of each frame overlapping the next.</p>
+<p>The library and rumi photos are my own. The cmu photos are from the OpenPano example data and cover a wide view. All images are resized to 1200 pixels on the long side before processing.</p>
+<p><b>REFERENCE</b> marks the middle frame that the other frames are warped onto.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="a2">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">A.2</span>Recover Homographies</h3>
+<div class="row">
+<div class="figs">
+    <figure class="fig" style="--r: 1.609"><img src="images/parta-2/a2_library_points.png" width="515" height="320" alt="Ten numbered correspondences on library 0 and library 1" loading="lazy"><figcaption>10 correspondences between library 0 and library 1</figcaption></figure>
+</div>
+<div class="text">
+<p>A homography maps a point \((x, y)\) to \((x', y')\) in homogeneous coordinates, with the bottom-right entry fixed to 1, so it has 8 unknowns:</p>
+<div class="math">$$\begin{bmatrix} a \\ b \\ w \end{bmatrix}=\begin{bmatrix} h_1 & h_2 & h_3 \\ h_4 & h_5 & h_6 \\ h_7 & h_8 & 1 \end{bmatrix}\begin{bmatrix} x \\ y \\ 1 \end{bmatrix},\qquad x'=\frac{a}{w},\quad y'=\frac{b}{w}$$</div>
+<p>Multiplying both sides by \(w = h_7x+h_8y+1\) makes the equations linear in \(h\):</p>
+<div class="math">$$\begin{aligned} x' &= h_1x+h_2y+h_3-h_7xx'-h_8yx' \\ y' &= h_4x+h_5y+h_6-h_7xy'-h_8yy' \end{aligned}$$</div>
+<p>Each correspondence adds two rows to a system \(A\mathbf{h}=\mathbf{b}\):</p>
+<div class="math">$$\begin{bmatrix} x & y & 1 & 0 & 0 & 0 & -xx' & -yx' \\ 0 & 0 & 0 & x & y & 1 & -xy' & -yy' \end{bmatrix}\mathbf{h}=\begin{bmatrix} x' \\ y' \end{bmatrix}$$</div>
+<p>Four points give an exact solution, but clicks are noisy, so I clicked 10 points and solved the 20 &times; 8 system with least squares, minimizing \(\lVert A\mathbf{h}-\mathbf{b}\rVert^2\). The recovered homography from library 0 to library 1 is:</p>
+<div class="math">$$H=\begin{bmatrix*}[r] 1.176099 & -0.041338 & -171.374504 \\ 0.127170 & 1.083258 & -46.756938 \\ 0.000200 & -0.000020 & 1.000000 \end{bmatrix*}$$</div>
+<p>The diagonal is close to 1 and the translation \(h_3\) is about \(-171\) pixels in \(x\), which matches the camera turning right between the two frames.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="a3">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">A.3</span>Warp the Images</h3>
+<div class="row">
+<div class="figs">
+<figure class="fig half" style="--r: 0.750"><img src="images/data/library_0.jpg" width="900" height="1200" alt="library 0 before rectification, Doe Library" loading="lazy"><figcaption>library 0, original</figcaption></figure>
+<div class="grid">
+    <figure class="fig" style="--r: 0.748"><img src="images/parta-3/a3_library_rect_nn.png" width="1342" height="1794" alt="Rectified library facade, nearest neighbor" loading="lazy"><figcaption>Nearest neighbor</figcaption></figure>
+    <figure class="fig" style="--r: 0.748"><img src="images/parta-3/a3_library_rect_bilinear.png" width="1342" height="1794" alt="Rectified library facade, bilinear" loading="lazy"><figcaption>Bilinear</figcaption></figure>
+</div>
+<p class="fig-note">library 0, rectified</p>
+<figure class="fig half" style="--r: 0.750"><img src="images/data/rumi_0.jpg" width="900" height="1200" alt="rumi 0 before rectification, the apartment" loading="lazy"><figcaption>rumi 0, original</figcaption></figure>
+<div class="grid">
+    <figure class="fig" style="--r: 0.836"><img src="images/parta-3/a3_rumi_rect_nn.png" width="1543" height="1846" alt="rumi 0 rectified to the entrance door, nearest neighbor" loading="lazy"><figcaption>Nearest neighbor</figcaption></figure>
+    <figure class="fig" style="--r: 0.836"><img src="images/parta-3/a3_rumi_rect_bilinear.png" width="1543" height="1846" alt="rumi 0 rectified to the entrance door, bilinear" loading="lazy"><figcaption>Bilinear</figcaption></figure>
+</div>
+<p class="fig-note">rumi 0, rectified</p>
+</div>
+<div class="text">
+<p><code>warpImageNearestNeighbor</code> and <code>warpImageBilinear</code> both use inverse warping. First, the four corners of the input are sent through \(H\) to get the bounding box of the output. Then every output pixel \((x', y')\) is sent back through \(H^{-1}\) to find where its color comes from in the input:</p>
+<div class="math">$$\begin{bmatrix} a \\ b \\ w \end{bmatrix}=H^{-1}\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix},\qquad (x, y)=\left(\frac{a}{w}, \frac{b}{w}\right)$$</div>
+<p>The source point \((x, y)\) usually falls between pixels. Nearest neighbor rounds it to the closest pixel. Bilinear takes a weighted average of the four surrounding pixels, where \(\Delta x = x-\lfloor x\rfloor\) and \(\Delta y = y-\lfloor y\rfloor\).</p>
+<figure class="diagram">
+<svg viewBox="0 0 260 210" role="img" aria-label="Four pixels I00, I10, I01 and I11 around a source point, with offsets delta x and delta y from I00">
+    <g class="px">
+        <rect x="40" y="20" width="90" height="90"/>
+        <rect x="130" y="20" width="90" height="90"/>
+        <rect x="40" y="110" width="90" height="90"/>
+        <rect x="130" y="110" width="90" height="90"/>
+    </g>
+    <g class="ctr">
+        <circle cx="85" cy="65" r="3.5"/>
+        <circle cx="175" cy="65" r="3.5"/>
+        <circle cx="85" cy="155" r="3.5"/>
+        <circle cx="175" cy="155" r="3.5"/>
+    </g>
+    <g class="lbl" text-anchor="middle">
+        <text x="85" y="94">I<tspan dy="4" font-size="10">00</tspan></text>
+        <text x="175" y="94">I<tspan dy="4" font-size="10">10</tspan></text>
+        <text x="85" y="185">I<tspan dy="4" font-size="10">01</tspan></text>
+        <text x="175" y="185">I<tspan dy="4" font-size="10">11</tspan></text>
+    </g>
+    <g class="dim">
+        <line x1="85" y1="65" x2="117" y2="65"/>
+        <line x1="117" y1="65" x2="117" y2="121"/>
+        <text x="101" y="59" text-anchor="middle">&#916;x</text>
+        <text x="123" y="98" text-anchor="start">&#916;y</text>
+    </g>
+    <circle class="src" cx="117" cy="121" r="5"/>
+    <text class="src-lbl" x="126" y="127" text-anchor="start">(x, y)</text>
+</svg>
+<figcaption>The source point between the four pixel centers</figcaption>
+</figure>
+<p>\(I_{00}\) is the pixel at \((\lfloor x\rfloor, \lfloor y\rfloor)\), with each pixel's value sitting at its center. The first digit is the step right and the second is the step down, so \(I_{10}\) is one pixel to the right, \(I_{01}\) is one below, and \(I_{11}\) is diagonal. Each pixel's weight is the area of the opposite rectangle, so the closest pixel counts the most:</p>
+<div class="math">$$\begin{aligned} I(x,y)=\;&(1-\Delta x)(1-\Delta y)\,I_{00} \\ +\;&\Delta x(1-\Delta y)\,I_{10} \\ +\;&(1-\Delta x)\Delta y\,I_{01} \\ +\;&\Delta x\,\Delta y\,I_{11} \end{aligned}$$</div>
+<p>Each output pixel also gets a fourth channel, alpha, which is its opacity: 1 means fully opaque and 0 means fully transparent. A pixel whose source lands inside the input gets alpha 1. A pixel whose source falls outside gets alpha 0 and a color of 0, so it is transparent. In the images shown here the alpha channel is dropped, so those pixels appear black, like the empty corners of the rectified images.</p>
+<h4 class="minor">Rectification</h4>
+<p>To rectify, I clicked the four corners of something I know is rectangular and computed the homography that sends them to a 200 &times; 400 rectangle.</p>
+<figure class="diagram small">
+<svg viewBox="0 0 260 215" role="img" aria-label="Target rectangle 200 wide and 400 tall, with corners at (0, 0), (200, 0), (0, 400) and (200, 400)">
+    <g class="px">
+        <rect x="95" y="30" width="70" height="140"/>
+    </g>
+    <g class="ctr">
+        <circle cx="95" cy="30" r="3.5"/>
+        <circle cx="165" cy="30" r="3.5"/>
+        <circle cx="95" cy="170" r="3.5"/>
+        <circle cx="165" cy="170" r="3.5"/>
+    </g>
+    <g class="corner">
+        <text x="89" y="26" text-anchor="end">(0, 0)</text>
+        <text x="171" y="26" text-anchor="start">(200, 0)</text>
+        <text x="89" y="184" text-anchor="end">(0, 400)</text>
+        <text x="171" y="184" text-anchor="start">(200, 400)</text>
+    </g>
+    <g class="dim">
+        <text x="130" y="200" text-anchor="middle">200</text>
+        <text x="88" y="105" text-anchor="end">400</text>
+    </g>
+</svg>
+<figcaption>Where the four clicked corners are sent</figcaption>
+</figure>
+<p>The first rectification uses the entrance doorway in library 0. After the warp, the library's columns are vertical and its windows are rectangles.</p>
+<p>The second rectification uses the entrance door in rumi 0, which becomes a flat rectangle after the warp. The zoomed crops land on the sliding door to its left.</p>
+</div>
+</div>
+<div class="row">
+<div class="figs">
+<div class="grid">
+    <figure class="fig" style="--r: 1.000"><img class="pixels" src="images/parta-3/a3_library_zoom_nn.png" width="200" height="200" alt="Zoomed lettering, nearest neighbor" loading="lazy"><figcaption>Zoom, nearest neighbor</figcaption></figure>
+    <figure class="fig" style="--r: 1.000"><img class="pixels" src="images/parta-3/a3_library_zoom_bilinear.png" width="200" height="200" alt="Zoomed lettering, bilinear" loading="lazy"><figcaption>Zoom, bilinear</figcaption></figure>
+</div>
+<p class="fig-note">library 0, zoomed in</p>
+<div class="grid">
+    <figure class="fig" style="--r: 0.667"><img class="pixels" src="images/parta-3/a3_rumi_zoom_nn.png" width="200" height="300" alt="Zoomed sliding door, nearest neighbor" loading="lazy"><figcaption>Zoom, nearest neighbor</figcaption></figure>
+    <figure class="fig" style="--r: 0.667"><img class="pixels" src="images/parta-3/a3_rumi_zoom_bilinear.png" width="200" height="300" alt="Zoomed sliding door, bilinear" loading="lazy"><figcaption>Zoom, bilinear</figcaption></figure>
+</div>
+<p class="fig-note">rumi 0, zoomed in</p>
+</div>
+<div class="text">
+<h4 class="minor">Speed and quality</h4>
+<div class="table-wrap"><table class="data"><tr><th>Image</th><th>Nearest neighbor</th><th>Bilinear</th></tr><tr><td>library 0</td><td class="num">0.29 s</td><td class="num">0.56 s</td></tr><tr><td>rumi 0</td><td class="num">0.43 s</td><td class="num">0.73 s</td></tr></table></div>
+<p>Bilinear is about 1.7 to 1.9 times slower because it reads four pixels and computes four weights for every output pixel, while nearest neighbor reads one.</p>
+<p>In the zoomed crops, nearest neighbor gives jagged, stair-stepped edges on the &ldquo;THE&rdquo; lettering and on the slats of the sliding door, because neighboring output pixels snap to the same input pixel. Bilinear edges are smooth, at the cost of being slightly softer. Since the difference in time is under half a second, I use bilinear for all the mosaics in the following sections.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="a4">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">A.4</span>Blend the Images into a Mosaic</h3>
+<div class="row">
+<div class="figs">
+<div class="grid sources">
+    <figure class="fig" style="--r: 0.750"><img src="images/data/library_0.jpg" width="900" height="1200" alt="library 0" loading="lazy"><figcaption>library 0</figcaption></figure>
+    <figure class="fig" style="--r: 0.750"><img src="images/data/library_1.jpg" width="900" height="1200" alt="library 1" loading="lazy"><figcaption>library 1</figcaption></figure>
+    <figure class="fig" style="--r: 0.750"><img src="images/data/library_2.jpg" width="900" height="1200" alt="library 2" loading="lazy"><figcaption>library 2</figcaption></figure>
+</div>
+    <figure class="fig" style="--r: 1.001"><img src="images/parta-4/a4_library_mosaic.png" width="1356" height="1354" alt="Mosaic of library 0, 1, 2" loading="lazy"><figcaption>library mosaic</figcaption></figure>
+<div class="grid sources">
+    <figure class="fig" style="--r: 0.750"><img src="images/data/rumi_0.jpg" width="900" height="1200" alt="rumi 0" loading="lazy"><figcaption>rumi 0</figcaption></figure>
+    <figure class="fig" style="--r: 0.750"><img src="images/data/rumi_1.jpg" width="900" height="1200" alt="rumi 1" loading="lazy"><figcaption>rumi 1</figcaption></figure>
+    <figure class="fig" style="--r: 0.750"><img src="images/data/rumi_2.jpg" width="900" height="1200" alt="rumi 2" loading="lazy"><figcaption>rumi 2</figcaption></figure>
+</div>
+    <figure class="fig" style="--r: 0.947"><img src="images/parta-4/a4_rumi_mosaic.png" width="1252" height="1322" alt="Mosaic of rumi 0, 1, 2" loading="lazy"><figcaption>rumi mosaic</figcaption></figure>
+<div class="grid sources">
+    <figure class="fig" style="--r: 1.500"><img src="images/data/cmu_1.jpg" width="1300" height="867" alt="cmu 1" loading="lazy"><figcaption>cmu 1</figcaption></figure>
+    <figure class="fig" style="--r: 1.500"><img src="images/data/cmu_2.jpg" width="1300" height="867" alt="cmu 2" loading="lazy"><figcaption>cmu 2</figcaption></figure>
+    <figure class="fig" style="--r: 1.500"><img src="images/data/cmu_3.jpg" width="1300" height="867" alt="cmu 3" loading="lazy"><figcaption>cmu 3</figcaption></figure>
+</div>
+    <figure class="fig" style="--r: 2.567"><img src="images/parta-4/a4_cmu_mosaic.png" width="3601" height="1403" alt="Mosaic of cmu 1, 2, 3" loading="lazy"><figcaption>cmu mosaic</figcaption></figure>
+</div>
+<div class="text">
+<p>Each mosaic uses the middle frame as the reference, so its homography is the identity. The side frames are each matched to the middle frame with 10 clicked correspondences. All frames are then warped onto one shared canvas in one pass:</p>
+<ol>
+<li>Warp the corners of every frame and take the union of their bounding boxes as the canvas.</li>
+<li>Warp every frame onto that canvas with bilinear interpolation, keeping the alpha channel.</li>
+<li>Give each frame a weight that is 1 at its center and falls to 0 at its edges: the distance transform of its alpha, divided by its maximum.</li>
+<li>Blend the frames with a two-band Laplacian blend.</li>
+</ol>
+<p>The two-band blend splits each warped frame \(I_i\) into a low band \(G_\sigma * I_i\), using a Gaussian with \(\sigma=5\), and a high band \(I_i - G_\sigma * I_i\). The low bands are averaged with the weights \(w_i\), which hides differences in exposure. The high band at each pixel is taken only from the frame with the largest weight there, which keeps edges sharp and avoids ghosting:</p>
+<div class="math">$$\text{low}=\frac{\sum_i w_i\,(G_\sigma * I_i)}{\sum_i w_i},\qquad \text{high}=I_k-G_\sigma * I_k,\quad k=\arg\max_i w_i$$</div>
+<p>The mosaic is \(\text{low}+\text{high}\), clipped to \([0, 1]\).</p>
+<h4 class="minor">library</h4>
+<p>The lettering, columns and doorway line up across the seams. library 0 and library 2 tilt slightly when warped onto library 1, which leaves black wedges along the top and bottom of the mosaic. The facade is evenly lit, so the seams between the photos are hard to see.</p>
+<h4 class="minor">rumi</h4>
+<p>The scene is indoors and close to the camera, so even a small shift of the phone causes parallax. The sliding door, entrance door, picture frame and kitchen counter line up across the seams. The three photos overlap a lot, so the mosaic is only a little wider than a single photo.</p>
+<h4 class="minor">cmu</h4>
+<p>The building's roofline stays straight, and its columns and trees line up across the seams. cmu 1 and cmu 3 are stretched wider toward the outer edges, which gives the mosaic its bow-tie shape, because a plane stretches whatever points far from its center. The sky blends smoothly even though its brightness differs between the photos.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="a5">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">A.5 &middot; Bells &amp; Whistles</span>Cylindrical Mapping</h3>
+<div class="row">
+<div class="figs">
+    <figure class="fig" style="--r: 2.339"><img src="images/parta-bells_whistles/a5_cmu_cylinder_mosaic.png" width="2715" height="1161" alt="Cylindrical mosaic of cmu 0, 1, 2, 3, 4" loading="lazy"><figcaption>Cylinder, cmu 0, 1, 2, 3, 4, \(f = 800\) px</figcaption></figure>
+    <figure class="fig" style="--r: 2.567"><img src="images/parta-4/a4_cmu_mosaic.png" width="3601" height="1403" alt="Flat mosaic of cmu 1, 2, 3" loading="lazy"><figcaption>Plane, cmu 1, 2, 3 only</figcaption></figure>
+</div>
+<div class="text">
+<p>A cylinder wraps around the camera, so it can hold a view wider than 180&deg;. The cylinder's radius is the focal length in pixels. The focal length has the same ratio to the image width in millimeters as in pixels:</p>
+<div class="math">$$\frac{\text{focal length (mm)}}{\text{sensor width (mm)}}=\frac{f\ \text{(px)}}{\text{image width (px)}}$$</div>
+<p>The cmu photos were taken with a 24 mm lens (35 mm equivalent), and a 35 mm frame is 36 mm wide, so for a 1200-pixel-wide image:</p>
+<div class="math">$$f=\frac{24}{36}\times1200=800\ \text{px}$$</div>
+<p>cmu 0 and cmu 4 do not overlap the reference (cmu 2) enough, so their homographies are chained through their neighbors: \(H_0=H_1H_{0\to1}\) and \(H_4=H_3H_{4\to3}\).</p>
+<h4 class="minor">Inverse sampling</h4>
+<p>Each pixel \((x', y')\) of the unrolled cylinder, measured from the reference center \((c_x, c_y)\), is an angle \(\theta=\dfrac{x'}{f}\) around the cylinder and a height \(h=\dfrac{y'}{f}\) on it. That direction hits the reference image plane at</p>
+<div class="math">$$x=f\tan\theta+c_x,\qquad y=\frac{f\,h}{\cos\theta}+c_y.$$</div>
+<p>This divides by \(\cos\theta\), which breaks at 90&deg;. Multiplying through by \(\cos\theta\) gives the same point in homogeneous coordinates with no division, so it works past 90&deg;:</p>
+<div class="math">$$\begin{bmatrix} a \\ b \\ w \end{bmatrix}=\begin{bmatrix} f\sin\theta+c_x\cos\theta \\ f\,h+c_y\cos\theta \\ \cos\theta \end{bmatrix}$$</div>
+<p>This point is sent back through \(H_i^{-1}\) into frame \(i\) and sampled with bilinear interpolation, so each pixel is read straight from the original photo. If the third coordinate after \(H_i^{-1}\) is 0 or negative, the direction is behind that frame's camera and the pixel is left empty. The canvas size comes from sending 100 points along each frame edge forward onto the cylinder, since straight edges become curves. The frames are then combined with the two-band Laplacian blend.</p>
+<p>On the cylinder, all of cmu 0, 1, 2, 3 and 4 fit. Vertical lines stay vertical, while straight horizontal lines like the building's roofline bend into curves. The wavy top and bottom edges come from the camera tilting slightly between frames.</p>
+</div>
+</div>
+</section>
+</section>
+
+<section class="part" id="partB">
+<div class="divider major"></div>
+<h2 class="part-title"><span class="num">PART B</span>Feature Matching for Autostitching</h2>
+<p class="part-intro">Coming soon.</p>
+</section>
+
     </main>
 
     <footer class="site-footer">
         <a href="https://github.com/yoonoolee/cs280a_computer_vision" target="_blank" rel="noopener">GitHub</a>
     </footer>
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\(', right: '\\)', display: false}], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], throwOnError: false});"></script>
 </body>
 </html>

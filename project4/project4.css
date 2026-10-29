@@ -1,0 +1,612 @@
+/* ============================================================
+   Project 4: contact sheet
+   Loaded after ../style.css; only restyles this page's content.
+   The page is a darkroom proof sheet: film strips hold the source
+   photos and divide the sections, and red grease pencil circles the
+   final mosaics. The shared nav and footer keep their shape from
+   style.css; the --nav-* knobs on body.p4 give them this page's look.
+   ============================================================ */
+:root {
+    --paper: #f0f1ee;
+    --ink: #1d201f;
+    --muted: #5d6460;
+    --film: #1a1c1b;
+    --edge: #e39b2b;
+    --grease: #d1293a;
+    --hair: rgba(29, 32, 31, 0.14);
+    --display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+    --text: 'Karla', 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'Space Mono', Menlo, Consolas, monospace;
+}
+
+html:has(body.p4) {
+    background: var(--paper);
+}
+
+body.p4 {
+    display: flow-root;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 17px;
+    line-height: 1.65;
+
+    /* nav + footer: film-black bar with edge-print lettering */
+    --nav-font: var(--mono);
+    --nav-size: 13px;
+    --nav-tracking: .06em;
+    --nav-case: uppercase;
+    --nav-bg: var(--film);
+    --nav-fg: #c9ccc9;
+    --nav-fg-active: var(--edge);
+    --nav-stroke: 0;
+    --nav-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+    --footer-size: 12px;
+}
+
+/* the footer sits on the paper, not on the film */
+body.p4 .site-footer a {
+    color: var(--muted);
+}
+
+body.p4 .site-footer a:hover {
+    color: var(--grease);
+}
+
+body.p4 main.flow {
+    max-width: none;
+    margin: 40px 0 120px;
+    padding: 0 48px;
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin: 52px 0 56px;
+}
+
+.masthead p {
+    margin: 0;
+}
+
+.masthead .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.masthead .project-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--edge);
+    background: var(--film);
+    padding: 3px 12px;
+    border-radius: 2px;
+}
+
+.masthead .title {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(52px, 9vw, 112px);
+    line-height: .92;
+    text-transform: uppercase;
+    text-wrap: balance;
+}
+
+.masthead .title span {
+    color: var(--grease);
+}
+
+.masthead .byline {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* ---------- Running text ---------- */
+.text p,
+.text ul,
+.text ol {
+    margin: 0 0 0.9em;
+}
+
+.text p,
+.text li,
+.fig figcaption,
+.fig-note {
+    text-wrap: pretty;
+}
+
+.text ul,
+.text ol {
+    padding-left: 1.3em;
+}
+
+.text li {
+    margin: 0.3em 0;
+}
+
+.flow a {
+    color: var(--grease);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+}
+
+.flow a:focus-visible {
+    outline: 2px solid var(--grease);
+    outline-offset: 2px;
+}
+
+.flow strong {
+    font-weight: 700;
+}
+
+.flow code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+}
+
+/* ---------- Section structure ---------- */
+.part,
+.sub {
+    scroll-margin-top: 90px;
+}
+
+/* the separator before every section: a strip of film with its sprocket holes */
+.divider {
+    height: 12px;
+    margin: 84px 0 40px;
+    border-radius: 2px;
+    background:
+        repeating-linear-gradient(90deg, transparent 0 7px, var(--paper) 7px 15px) center / 100% 4px no-repeat,
+        var(--film);
+}
+
+/* a part opens with a wider strip, holes along both edges */
+.divider.major {
+    height: 26px;
+    margin-top: 110px;
+    background:
+        repeating-linear-gradient(90deg, transparent 0 7px, var(--paper) 7px 15px) top 4px left / 100% 5px no-repeat,
+        repeating-linear-gradient(90deg, transparent 0 7px, var(--paper) 7px 15px) bottom 4px left / 100% 5px no-repeat,
+        var(--film);
+}
+
+/* the first section of a part sits under the part's own separator */
+.part-title + .sub > .divider,
+.part-title + .part-intro + .sub > .divider {
+    display: none;
+}
+
+.part-title + .sub,
+.part-title + .part-intro + .sub {
+    margin-top: 40px;
+}
+
+h2.part-title {
+    display: block;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--ink);
+    margin: 0 0 8px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(40px, 5.4vw, 60px);
+    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+    text-wrap: balance;
+}
+
+h2.part-title .num {
+    display: table;
+    margin: 0 auto 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--edge);
+    background: var(--film);
+    padding: 3px 10px;
+    border-radius: 2px;
+}
+
+h3.sub-title {
+    margin: 0 0 8px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(30px, 3.6vw, 40px);
+    line-height: 1.05;
+    text-transform: uppercase;
+    text-align: center;
+    text-wrap: balance;
+}
+
+h3.sub-title .num {
+    display: block;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    color: var(--grease);
+}
+
+h4.minor {
+    margin: 0 0 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* a sub-heading that follows text gets extra room above it */
+.text > * + h4.minor {
+    margin-top: 1.5em;
+}
+
+/* a part's short introduction, centred under its title */
+.part-intro {
+    max-width: 720px;
+    margin: 14px auto 0;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--muted);
+}
+
+/* the page introduction under the masthead */
+.lede {
+    max-width: 1140px;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: pretty;
+}
+
+.lede p {
+    margin: 0 0 0.9em;
+}
+
+/* one spread: figures left, prose right */
+.row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 40px 56px;
+    align-items: start;
+    margin-top: 36px;
+}
+
+.row + .row {
+    margin-top: 64px;
+}
+
+.row > .figs,
+.row > .text {
+    min-width: 0;
+}
+
+.row > .text > :first-child,
+.row > .figs > :first-child {
+    margin-top: 0;
+}
+
+.row > .text > :last-child,
+.row > .figs > :last-child {
+    margin-bottom: 0;
+}
+
+.figs > * + * {
+    margin-top: 26px;
+}
+
+/* ---------- Mathematics ---------- */
+.math {
+    margin: 0.2em 0 1em;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.math .katex-display {
+    margin: 0.4em 0;
+}
+
+.flow .katex {
+    font-size: 1.04em;
+}
+
+/* ---------- Diagrams ---------- */
+.diagram {
+    margin: 0.4em auto 1.2em;
+    width: min(100%, 320px);
+    display: grid;
+    gap: 6px;
+}
+
+.diagram svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.diagram .px rect {
+    fill: #ffffff;
+    stroke: var(--ink);
+    stroke-width: 1.2;
+}
+
+.diagram .ctr circle {
+    fill: var(--ink);
+}
+
+.diagram text {
+    font-family: var(--text);
+    font-size: 19px;
+    font-style: italic;
+    fill: var(--ink);
+}
+
+.diagram .dim line {
+    stroke: var(--edge);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+}
+
+.diagram .dim text {
+    fill: var(--edge);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.diagram .src {
+    fill: var(--grease);
+}
+
+.diagram .src-lbl {
+    fill: var(--grease);
+    font-size: 16px;
+}
+
+.diagram figcaption {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* ---------- Tables ---------- */
+.table-wrap {
+    margin: 0.2em 0 1.1em;
+    overflow-x: auto;
+}
+
+table.data {
+    margin-inline: auto;
+    border-collapse: collapse;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+}
+
+table.data th,
+table.data td {
+    padding: 6px 18px 6px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--hair);
+    white-space: nowrap;
+}
+
+table.data th {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--ink);
+}
+
+table.data td.num {
+    text-align: right;
+}
+
+/* ---------- Figures ---------- */
+/* one row of figures at a shared height: each figure's flex weight is its aspect ratio (--r, set inline) */
+.grid {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.grid > .fig {
+    flex: var(--r, 1) 1 0;
+}
+
+.fig {
+    margin: 0;
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+}
+
+/* results are shown as-is, with no added border, so their own edges stay visible */
+.fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.4);
+}
+
+.fig figcaption {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--muted);
+    text-align: center;
+}
+
+.figs > * + .fig {
+    margin-top: 26px;
+}
+
+/* figures with only two panels side by side are shown smaller */
+.fig.half {
+    max-width: 68%;
+    margin-inline: auto;
+}
+
+/* a display note that applies to a whole group of figures */
+.figs .fig-note {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* ---------- Film strips (source photos) ---------- */
+.strip {
+    margin: 0;
+    background: var(--film);
+    padding: 30px 12px 22px;
+    border-radius: 3px;
+    position: relative;
+}
+
+/* sprocket holes along the top and bottom edges */
+.strip::before,
+.strip::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(90deg, transparent 0 8px, var(--paper) 8px 18px);
+}
+
+.strip::before { top: 6px; }
+.strip::after { bottom: 6px; }
+
+.strip .frames {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.strip .frame {
+    flex: var(--r, 1) 1 0;
+    min-width: 0;
+    margin: 0;
+    position: relative;
+}
+
+.strip .frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* frame numbers printed on the film edge */
+.strip .frame span {
+    position: absolute;
+    top: -19px;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    color: var(--edge);
+    white-space: nowrap;
+}
+
+.strip + figcaption,
+.strip-cap {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 900px) {
+    body.p4 main.flow { padding: 0 20px; }
+    .row { grid-template-columns: 1fr; gap: 24px; }
+    .row > .text { order: -1; }
+    .fig.half { max-width: none; }
+}
+
+@media (max-width: 640px) {
+    body.p4 { font-size: 16px; }
+    body.p4 main.flow { padding: 0 16px; }
+    .grid { flex-wrap: wrap; gap: 14px 12px; }
+    .grid > .fig { flex: 1 1 40%; }
+    .divider { margin: 64px 0 32px; }
+    .strip .frame span { font-size: 9px; }
+}
+
+/* ---------- Print / save-as-PDF ---------- */
+@media print {
+    body.p4 { font-size: 12px; }
+    body.p4 .site-nav { position: static; }
+    body.p4 main.flow { margin: 0 auto 40px; padding: 0; }
+    .masthead { margin: 24px 0 28px; }
+    .divider { margin: 36px 0 22px; }
+    .divider.major { margin-top: 44px; }
+    .row { gap: 20px 28px; margin-top: 20px; }
+    .row + .row { margin-top: 28px; }
+    h2.part-title,
+    h3.sub-title,
+    .divider {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+    .fig,
+    .strip,
+    .math,
+    .table-wrap {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    .fig figcaption,
+    .strip-cap { font-size: 10px; }
+}
+
+/* zoomed crops are tiny, so show their pixels as hard squares instead of smoothing them */
+.fig img.pixels {
+    image-rendering: pixelated;
+}
+
+/* corner coordinates in the rectification diagram */
+.diagram.small {
+    width: min(100%, 260px);
+}
+
+.diagram .corner text {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 13px;
+    fill: var(--muted);
+}
+
+/* a new group of figures in the same column starts after a gap */
+.figs > .fig-note + .fig {
+    margin-top: 56px;
+}
+
+/* each mosaic's source photos start a new group in the column */
+.figs > .fig + .grid.sources {
+    margin-top: 56px;
+}
