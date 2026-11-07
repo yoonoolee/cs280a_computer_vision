@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Avery's CS 280A Home</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600&display=block" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="home">
+    <canvas id="dots" aria-hidden="true"></canvas>
+
+    <a class="home-brand" href="index.html">Avery Lee</a>
+
     <nav class="site-nav">
+        <span class="nav-outline" aria-hidden="true"></span>
         <a href="index.html" class="active">Home</a>
         <a href="project0/">Project 0</a>
         <a href="project1/">Project 1</a>
@@ -21,43 +27,221 @@
     </nav>
 
     <main>
-        <div class="home-hero">
-            <h1>UC Berkeley CS 280A<br>Computer Vision and Computational Photography</h1>
-            <p class="term">Fall 2026</p>
-            <p class="name">Avery Lee</p>
-            <p class="email"><a href="mailto:avery_lee@berkeley.edu">avery_lee@berkeley.edu</a></p>
-        </div>
+        <header class="home-hero">
+            <p class="kicker">UC Berkeley CS 280A &middot; Fall 2026</p>
+            <h1>Computer Vision and Computational Photography</h1>
+        </header>
 
-        <div class="project-list">
-            <a href="project0/" class="project-row">
-                <div class="project-thumb"><img src="project0/images/cs280a_proj0_part3.gif" alt="Project 0 thumbnail"></div>
-                <span class="project-name">Project 0: Becoming Friends with Your Camera</span>
+        <div class="project-grid">
+            <a href="project0/" class="project-tile">
+                <div class="project-frame"><img src="project0/images/cs280a_proj0_part3.gif" alt="Project 0 thumbnail"></div>
+                <span class="project-cap"><span class="project-num">0</span><span class="project-name">Becoming Friends with Your Camera</span></span>
             </a>
-            <a href="project1/" class="project-row">
-                <div class="project-thumb"><img src="project1/images/bells_whistles/emir-pyramid-ncc.jpg" alt="Project 1 thumbnail"></div>
-                <span class="project-name">Project 1: Images of the Russian Empire — Colorizing the Prokudin-Gorskii Photo Collection</span>
+            <a href="project1/" class="project-tile">
+                <div class="project-frame"><img src="project1/images/bells_whistles/emir-pyramid-ncc.jpg" alt="Project 1 thumbnail"></div>
+                <span class="project-cap"><span class="project-num">1</span><span class="project-name">Images of the Russian Empire — Colorizing the Prokudin-Gorskii Photo Collection</span></span>
             </a>
-            <a href="project2/" class="project-row">
-                <div class="project-thumb"><img src="project2/images/part2-3/part2-3_apple_orange_blend_sum.png" alt="Project 2 thumbnail"></div>
-                <span class="project-name">Project 2: Fun with Filters and Frequencies</span>
+            <a href="project2/" class="project-tile">
+                <div class="project-frame"><img src="project2/images/part2-3/part2-3_apple_orange_blend_sum.png" alt="Project 2 thumbnail"></div>
+                <span class="project-cap"><span class="project-num">2</span><span class="project-name">Fun with Filters and Frequencies</span></span>
             </a>
-            <a href="project3/" class="project-row">
-                <div class="project-thumb"><img src="project3/images/parta-bells_whistles/strong_waves.png" alt="Project 3 thumbnail"></div>
-                <span class="project-name">Project 3: Fun with Flow Models</span>
+            <a href="project3/" class="project-tile">
+                <div class="project-frame"><img src="project3/images/parta-bells_whistles/strong_waves.png" alt="Project 3 thumbnail"></div>
+                <span class="project-cap"><span class="project-num">3</span><span class="project-name">Fun with Flow Models</span></span>
             </a>
-            <a href="project4/" class="project-row">
-                <div class="project-thumb" style="background: #000"><img src="project4/images/parta-bells_whistles/a5_cmu_cylinder_mosaic.png" alt="Project 4 thumbnail" style="object-fit: contain"></div>
-                <span class="project-name">Project 4: (Auto)stitching and Photo Mosaics</span>
+            <a href="project4/" class="project-tile">
+                <div class="project-frame"><img class="trim" src="project4/images/partb-1/b1_library_anms.png" alt="Project 4 thumbnail"></div>
+                <span class="project-cap"><span class="project-num">4</span><span class="project-name">(Auto)stitching and Photo Mosaics</span></span>
             </a>
-            <a href="project5/" class="project-row">
-                <div class="project-thumb placeholder">5</div>
-                <span class="project-name">Project 5: Final Project</span>
+            <a href="project5/" class="project-tile">
+                <div class="project-frame placeholder">Coming soon</div>
+                <span class="project-cap"><span class="project-num">5</span><span class="project-name">Final Project</span></span>
             </a>
         </div>
     </main>
 
     <footer class="site-footer">
+        <a class="footer-email" href="mailto:avery_lee@berkeley.edu">avery_lee@berkeley.edu</a>
         <a href="https://github.com/yoonoolee/cs280a_computer_vision" target="_blank" rel="noopener">GitHub</a>
     </footer>
+
+    <script>
+        // Nav outline: appears on the hovered link, slides between links, and fades out when the cursor leaves the nav.
+        (function () {
+            const nav = document.querySelector('.site-nav');
+            const outline = nav.querySelector('.nav-outline');
+
+            function place(link) {
+                outline.style.width = link.offsetWidth + 'px';
+                outline.style.height = link.offsetHeight + 'px';
+                outline.style.transform = 'translate(' + link.offsetLeft + 'px, ' + link.offsetTop + 'px)';
+            }
+
+            nav.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('mouseenter', () => {
+                    if (!outline.classList.contains('visible')) {
+                        // Jump straight to the first hovered link instead of sliding in from the last one
+                        const transition = outline.style.transition;
+                        outline.style.transition = 'opacity 0.2s ease';
+                        place(link);
+                        outline.getBoundingClientRect();
+                        outline.style.transition = transition;
+                        outline.classList.add('visible');
+                    } else {
+                        place(link);
+                    }
+                });
+            });
+
+            nav.addEventListener('mouseleave', () => outline.classList.remove('visible'));
+        })();
+
+        // A soft halftone dot blob that follows the cursor and drags a smooth, tapering tail behind it.
+        (function () {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const canvas = document.getElementById('dots');
+            const ctx = canvas.getContext('2d');
+            const GAP = 12;
+            const INK = '133, 130, 124';
+            const RADIUS = 44;      // size of the blob itself
+            const EASE = 0.35;      // how quickly the blob catches up to the cursor
+            const TAIL = 18;        // number of segments in the tail
+            const FOLLOW = 0.5;     // how tightly each tail segment follows the one ahead
+            const head = { x: 0, y: 0 };
+            const tail = Array.from({ length: TAIL }, () => ({ x: 0, y: 0 }));
+            let width = 0;
+            let height = 0;
+            let mouseX = 0;
+            let mouseY = 0;
+            let alpha = 0;
+            let targetAlpha = 0;
+            let started = false;
+            let running = false;
+
+            function resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                canvas.style.width = width + 'px';
+                canvas.style.height = height + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                draw();
+            }
+
+            // The blob plus its tail. The tail tapers smoothly, and extra points fill any gap between segments
+            function sources() {
+                const points = [{ x: head.x, y: head.y, r: RADIUS }];
+                tail.forEach((p, i) => {
+                    const t = (i + 1) / (TAIL + 1);
+                    points.push({ x: p.x, y: p.y, r: RADIUS * 0.8 * Math.pow(1 - t, 1.3) });
+                });
+                const list = [points[0]];
+                for (let i = 1; i < points.length; i++) {
+                    const p = points[i - 1];
+                    const q = points[i];
+                    const step = Math.max(2, 0.4 * Math.min(p.r, q.r));
+                    const n = Math.min(8, Math.floor(Math.hypot(q.x - p.x, q.y - p.y) / step));
+                    for (let k = 1; k <= n; k++) {
+                        const f = k / (n + 1);
+                        list.push({ x: p.x + (q.x - p.x) * f, y: p.y + (q.y - p.y) * f, r: p.r + (q.r - p.r) * f });
+                    }
+                    list.push(q);
+                }
+                return list;
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                if (alpha < 0.01) return;
+
+                const list = sources();
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                list.forEach((b) => {
+                    minX = Math.min(minX, b.x - b.r);
+                    minY = Math.min(minY, b.y - b.r);
+                    maxX = Math.max(maxX, b.x + b.r);
+                    maxY = Math.max(maxY, b.y + b.r);
+                });
+                const x0 = Math.max(GAP / 2, Math.floor(minX / GAP) * GAP + GAP / 2);
+                const y0 = Math.max(GAP / 2, Math.floor(minY / GAP) * GAP + GAP / 2);
+
+                ctx.fillStyle = 'rgba(' + INK + ', ' + (0.55 * alpha) + ')';
+                for (let y = y0; y <= Math.min(maxY, height); y += GAP) {
+                    for (let x = x0; x <= Math.min(maxX, width); x += GAP) {
+                        // Each dot takes its size from the strongest nearby source, so blob and tail merge into one shape
+                        let v = 0;
+                        for (const b of list) {
+                            const t = 1 - Math.hypot(x - b.x, y - b.y) / b.r;
+                            if (t > v) v = t;
+                        }
+                        if (v <= 0) continue;
+                        const r = v * v * (3 - 2 * v) * GAP * 0.42;
+                        if (r < 0.4) continue;
+                        ctx.beginPath();
+                        ctx.arc(x, y, r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            function step() {
+                alpha += (targetAlpha - alpha) * 0.12;
+                head.x += (mouseX - head.x) * EASE;
+                head.y += (mouseY - head.y) * EASE;
+                let lead = head;
+                tail.forEach((p) => {
+                    p.x += (lead.x - p.x) * FOLLOW;
+                    p.y += (lead.y - p.y) * FOLLOW;
+                    lead = p;
+                });
+
+                const last = tail[TAIL - 1];
+                const moving = Math.abs(targetAlpha - alpha) > 0.01 ||
+                    Math.abs(mouseX - head.x) + Math.abs(mouseY - head.y) > 0.3 ||
+                    Math.abs(last.x - head.x) + Math.abs(last.y - head.y) > 0.3;
+
+                draw();
+                if (moving) {
+                    requestAnimationFrame(step);
+                } else {
+                    running = false;
+                }
+            }
+
+            function run() {
+                if (!running) {
+                    running = true;
+                    requestAnimationFrame(step);
+                }
+            }
+
+            window.addEventListener('pointermove', (e) => {
+                if (e.pointerType === 'touch') return;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                if (!started) {
+                    // Start at the cursor so the blob doesn't fly in from the corner
+                    head.x = mouseX;
+                    head.y = mouseY;
+                    tail.forEach((p) => { p.x = mouseX; p.y = mouseY; });
+                    started = true;
+                }
+                // Hide the blob while the cursor is on the top bar (name or nav)
+                targetAlpha = e.target.closest('.site-nav, .home-brand') ? 0 : 1;
+                run();
+            });
+
+            document.addEventListener('pointerleave', () => {
+                targetAlpha = 0;
+                run();
+            });
+
+            window.addEventListener('resize', resize);
+            resize();
+        })();
+    </script>
 </body>
 </html>
