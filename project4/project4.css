@@ -610,3 +610,16 @@ table.data td.num {
 .figs > .fig + .grid.sources {
     margin-top: 56px;
 }
+
+/* each manual and automatic pair in Part B starts a new group in the column */
+#b4 .figs > .fig-note + .grid {
+    margin-top: 56px;
+}
+
+/* keep each Part B section's number on the same printed page as its title */
+@media print {
+    #partB h3.sub-title {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

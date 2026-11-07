@@ -28,7 +28,7 @@
             <p class="eyebrow">UC Berkeley CS 280A &middot; Computer Vision and Computational Photography</p>
             <p class="project-label">PROJECT 4</p>
             <h1 class="title"><span>[Auto]</span>Stitching Photo Mosaics</h1>
-            <p class="byline">Avery Lee &middot; October 27, 2026</p>
+            <p class="byline">Avery Lee &middot; November 10, 2026</p>
         </header>
 
 <div class="lede">
@@ -289,7 +289,135 @@
 <section class="part" id="partB">
 <div class="divider major"></div>
 <h2 class="part-title"><span class="num">PART B</span>Feature Matching for Autostitching</h2>
-<p class="part-intro">Coming soon.</p>
+<p class="part-intro">Correspondences are now found automatically: detect corners, describe them, match them, and use RANSAC to reject the wrong matches. The method follows the <a href="https://cal-cs180.github.io/fa26/hw/proj3/Papers/MOPS.pdf" target="_blank" rel="noopener">MOPS paper</a> by Brown, Szeliski and Winder, simplified to a single scale with no sub-pixel refinement.</p>
+
+<section class="sub" id="b1">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">B.1</span>Harris Corner Detection</h3>
+<div class="row">
+<div class="figs">
+<div class="grid">
+    <figure class="fig" style="--r: 0.724"><img src="images/partb-1/b1_library_harris.png" width="594" height="821" alt="Library 1 almost entirely covered by red Harris corners" loading="lazy"><figcaption>Harris corners: 26,877</figcaption></figure>
+    <figure class="fig" style="--r: 0.724"><img src="images/partb-1/b1_library_anms.png" width="594" height="821" alt="Library 1 with 500 red corners spread across the facade" loading="lazy"><figcaption>After ANMS: 500</figcaption></figure>
+</div>
+<p class="fig-note">library 1</p>
+</div>
+<div class="text">
+<p>The provided Harris detector returns the corners of the image (the points where the image brightness changes sharply in every direction), each with a strength \(f\) that measures how strong that change is.</p>
+<p>Adaptive Non-Maximal Suppression (ANMS) keeps corners that are both strong and spread out. Each corner's suppression radius \(r_i\) is the distance to its nearest clearly stronger neighbor:</p>
+<div class="math">$$r_i=\min_j\,\lVert\mathbf{x}_i-\mathbf{x}_j\rVert\quad\text{such that}\quad f(\mathbf{x}_i)&lt;c_{\text{robust}}\cdot f(\mathbf{x}_j)$$</div>
+<p>I keep the 500 corners with the largest radii, using \(c_{\text{robust}}=0.9\). A neighbor therefore only suppresses a corner if \(f_i&lt;0.9\cdot f_j\), meaning the corner is below 90% of the neighbor's strength. The result covers the facade much more evenly, including the tree and the pavement.</p>
+<p>I only run ANMS on the top 5,000 corners with strongest strength to be more efficient with memory. Only stronger corners can suppress a corner, so those 5,000 get the same radii as they would with all the corners. The cost is that weaker corners outside the top 5,000 can never be chosen.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="b2">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">B.2</span>Feature Descriptor Extraction</h3>
+<div class="row">
+<div class="figs">
+    <figure class="fig half" style="--r: 0.893"><img src="images/partb-2/b2_library_descriptors.png" width="1278" height="1431" alt="Sixteen 8 by 8 grayscale descriptors from library 1" loading="lazy"><figcaption>16 of the 500 normalized descriptors from library 1</figcaption></figure>
+</div>
+<div class="text">
+<p>Then I describe each of the 500 corners from ANMS with an 8 &times; 8 patch sampled from the 40 &times; 40 window around it:</p>
+<ol>
+<li>Blur the grayscale image with a Gaussian, \(\sigma=2\). Each sample then reflects the pixels around it instead of a single pixel, which reduces aliasing when I skip pixels in the next step.</li>
+<li>Take every 5th pixel of the window, which gives 8 samples per side. With coarse samples instead of every pixel, a corner found a pixel or two off still gives nearly the same patch.</li>
+<li>Normalize the patch to mean 0 and standard deviation 1. This removes differences in brightness and contrast between photos, so the same corner gives about the same patch even if one photo is brighter.</li>
+</ol>
+<div class="math">$$\hat{d}=\frac{d-\mu}{\sigma_d}$$</div>
+<p>The patches are axis-aligned here, meaning the sampling grid follows the image's rows and columns and doesn't rotate with the corner. <a href="#b5">Step B.5</a> adds rotation invariance to this step, which will be discussed more in that section.</p>
+<p>The descriptors show simple structures such as horizontal edges and L-shaped corners, which is what the facade's ledges and window frames look like at this coarse scale.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="b3">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">B.3</span>Feature Matching</h3>
+<div class="row">
+<div class="figs">
+    <figure class="fig" style="--r: 1.437"><img src="images/partb-3/b3_library_matches.png" width="1888" height="1314" alt="Library 0 and library 1 side by side with colored lines joining 232 matched corners" loading="lazy"><figcaption>232 matches between library 0 (left) and library 1 (right)</figcaption></figure>
+</div>
+<div class="text">
+<p>Each descriptor is compared to every descriptor in the other image by squared distance. The closest one is not automatically a good match, because every corner has a closest descriptor, even one with no true partner.</p>
+<p>Lowe's ratio test compares the best match to the second best. A correct match should be much closer than anything else, while an incorrect one is about as close as its runner-up:</p>
+<div class="math">$$\frac{e_{1\text{-NN}}}{e_{2\text{-NN}}}&lt;0.6$$</div>
+<p>A lower ratio means a more confident match. I chose 0.6 after consulting Figure 6b in the paper.</p>
+<p>Of library 0's 500 corners, 232 pass this ratio test. Most lines run nearly parallel, as expected for a camera turning between shots. Some matches are still wrong, like the long diagonal line by the doorway. The ratio test only looks at how the patches look, so it can't catch these.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="b4">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">B.4</span>RANSAC for Robust Homography</h3>
+<div class="row">
+<div class="figs">
+<div class="grid">
+    <figure class="fig" style="--r: 1.001"><img src="images/parta-4/a4_library_mosaic.png" width="1356" height="1354" alt="Manually stitched library mosaic" loading="lazy"><figcaption>Manual</figcaption></figure>
+    <figure class="fig" style="--r: 1.015"><img src="images/partb-4/b4_library_auto_mosaic.png" width="1363" height="1343" alt="Automatically stitched library mosaic" loading="lazy"><figcaption>Automatic</figcaption></figure>
+</div>
+<p class="fig-note">library mosaic</p>
+<div class="grid">
+    <figure class="fig" style="--r: 0.947"><img src="images/parta-4/a4_rumi_mosaic.png" width="1252" height="1322" alt="Manually stitched rumi mosaic" loading="lazy"><figcaption>Manual</figcaption></figure>
+    <figure class="fig" style="--r: 0.936"><img src="images/partb-4/b4_rumi_auto_mosaic.png" width="1256" height="1342" alt="Automatically stitched rumi mosaic" loading="lazy"><figcaption>Automatic</figcaption></figure>
+</div>
+<p class="fig-note">rumi mosaic</p>
+<div class="grid">
+    <figure class="fig" style="--r: 2.567"><img src="images/parta-4/a4_cmu_mosaic.png" width="3601" height="1403" alt="Manually stitched cmu mosaic" loading="lazy"><figcaption>Manual</figcaption></figure>
+    <figure class="fig" style="--r: 2.678"><img src="images/partb-4/b4_cmu_auto_mosaic.png" width="3939" height="1471" alt="Automatically stitched cmu mosaic" loading="lazy"><figcaption>Automatic</figcaption></figure>
+</div>
+<p class="fig-note">cmu mosaic</p>
+</div>
+<div class="text">
+<p>Least squares would let every wrong match pull on the homography. 4-point RANSAC finds the largest group of matches that agree with each other and fits only to those:</p>
+<ol>
+<li>Pick 4 random matches and compute the exact \(H\) they define.</li>
+<li>Apply \(H\) to every matched point in the first image.</li>
+<li>Count the inliers: matches where \(H\) lands within 5 pixels of the partner, \(\lVert H\mathbf{p}_i-\mathbf{p}_i'\rVert&lt;5\).</li>
+<li>Keep the largest set of inliers found over 1,000 tries.</li>
+<li>Recompute \(H\) with least squares on all of those inliers.</li>
+</ol>
+<p>I chose the 5-pixel threshold and the 1,000 tries.</p>
+<div class="table-wrap"><table class="data"><tr><th>Image</th><th>Matched to</th><th>Matches</th><th>Inliers</th><th>Rate</th></tr><tr><td>library 0</td><td>library 1</td><td class="num">232</td><td class="num">206</td><td class="num">88.8%</td></tr><tr><td>library 2</td><td>library 1</td><td class="num">238</td><td class="num">221</td><td class="num">92.9%</td></tr><tr><td>rumi 0</td><td>rumi 1</td><td class="num">201</td><td class="num">135</td><td class="num">67.2%</td></tr><tr><td>rumi 2</td><td>rumi 1</td><td class="num">196</td><td class="num">112</td><td class="num">57.1%</td></tr><tr><td>cmu 1</td><td>cmu 2</td><td class="num">62</td><td class="num">48</td><td class="num">77.4%</td></tr><tr><td>cmu 3</td><td>cmu 2</td><td class="num">58</td><td class="num">51</td><td class="num">87.9%</td></tr></table></div>
+<p>The mosaics use the same photos, reference frames and blending as <a href="#a4">Step A.4</a>. Only the homographies change, with each one now fit to dozens or hundreds of inliers instead of my 10 manual (and imprecise) clicks.</p>
+<h4 class="minor">library</h4>
+<p>The automatic mosaic is very close to the manual one. The lettering, columns and doorway line up across the seams, and this set has the highest inlier rates, probably because the image is full of distinct detail.</p>
+<h4 class="minor">rumi</h4>
+<p>This set has the lowest inlier rates, probably because of the plain walls and the repeating slats of the sliding door. Plenty of inliers remain, and the door frames and kitchen counter line up. The biggest noticeable difference is on the left side, where the automatic mosaic has less ghosting along the image edges than the manual one.</p>
+<h4 class="minor">cmu</h4>
+<p>This set has the fewest matches, since much of each frame is smooth sky and lawn. The building and trees still line up across the seams. The far outer corners of the frames are very sensitive to small differences in \(H\), so the automatic mosaic is a little wider than the manual one.</p>
+</div>
+</div>
+</section>
+
+<section class="sub" id="b5">
+<div class="divider"></div>
+<h3 class="sub-title"><span class="num">B.5 &middot; Bells &amp; Whistles</span>Rotation Invariance</h3>
+<div class="row">
+<div class="figs">
+<figure class="fig half" style="--r: 1"><img src="images/partb-bells_whistles/b5_library0_rotated.png" width="1485" height="1485" alt="Library 0 rotated 45 degrees, with black corners" loading="lazy"><figcaption>Library 0, rotated 45&deg; for the test</figcaption></figure>
+<figure class="fig" style="--r: 1.014"><img src="images/partb-bells_whistles/b5_library_rotation_mosaic.png" width="1362" height="1343" alt="Library mosaic aligned using the rotated photo" loading="lazy"><figcaption>Library mosaic, with library 0 aligned through its rotated copy</figcaption></figure>
+</div>
+<div class="text">
+<p>The axis-aligned descriptors in <a href="#b2">Step B.2</a> stop working when one photo is tilted, because the same corner produces a rotated patch. To fix this, each corner gets its own angle, and its patch is sampled along that angle. The same corner then gives about the same patch in any rotation.</p>
+<p>The angle comes from the gradient of the image blurred with \(\sigma_o=4.5\), a separate and stronger blur than the \(\sigma=2\) in <a href="#b2">Step B.2</a>. atan2 turns the gradient's x and y parts into its angle. The blur keeps the angle stable if the corner is found slightly off. At a corner \((r, c)\):</p>
+<div class="math">$$\theta=\operatorname{atan2}\!\left(\frac{\partial I}{\partial y},\,\frac{\partial I}{\partial x}\right)$$</div>
+<p>The 8 samples per side are 5 pixels apart, which spans 35 pixels, so offsets of \(s, t\in\{-17.5,-12.5,\dots,17.5\}\) center the grid on the corner. Each offset is rotated by \(\theta\):</p>
+<div class="math">$$\begin{aligned} c'&amp;=c+s\cos\theta-t\sin\theta \\ r'&amp;=r+s\sin\theta+t\cos\theta \end{aligned}$$</div>
+<p>Rotated positions fall between pixels, so I sample with bilinear interpolation. A rotated grid can reach about 25 pixels from its corner, past the 20-pixel border Harris skips, so samples off the image use the nearest edge pixel. Normalization, matching and RANSAC are unchanged.</p>
+<h4 class="minor">Testing it</h4>
+<p>The photos in all three sets are at about the same angle, so axis-aligned descriptors already work on them. To test this feature, I rotated the library 0 image by 45&deg; myself to mimic using a rotated image. Then I matched it to library 1 both ways:</p>
+<div class="table-wrap"><table class="data"><tr><th>Descriptors</th><th>Matches</th><th>Inliers</th></tr><tr><td>Axis-aligned</td><td class="num">12</td><td class="num">9</td></tr><tr><td>Rotation invariant</td><td class="num">235</td><td class="num">185</td></tr></table></div>
+<p>Rotation invariance gets about 20 times as many matches, close to the 232 from the unrotated pair in <a href="#b3">Step B.3</a>. Each corner finds its own angle from the pixels.</p>
+<p>The rotated photo has black corners that would blend into a mosaic, so the mosaic warps the original library 0 instead. With \(R\) as the rotation from library 0 to its rotated copy, and \(H_r\) as the RANSAC homography from that copy to library 1:</p>
+<div class="math">$$H_0=H_r\,R$$</div>
+<p>I also matched library 2 with rotation-invariant descriptors, and 228 of its 258 matches are inliers. The mosaic looks like the one from <a href="#b4">Step B.4</a>, with the columns and lettering aligned, which confirms that the matches through the rotated photo work well.</p>
+</div>
+</div>
+</section>
 </section>
 
     </main>
