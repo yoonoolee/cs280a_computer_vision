@@ -1,0 +1,249 @@
+/* Project 0: pixel scrapbook theme. The nav and footer come from ../style.css (body.p0 knobs). */
+body.p0 {
+    --card: #fffaf0;
+    --ink-soft: #6b5546;
+    --on-green: #fdf6e3;
+    --grid: rgba(74, 124, 63, 0.16);
+    --tape: rgba(214, 190, 120, 0.8);
+    --shadow: rgba(75, 46, 30, 0.35);
+    --hand-font: 'Pixelify Sans', 'VT323', monospace;
+    --label-font: 'Silkscreen', 'VT323', monospace;
+    --pixel-font: 'Press Start 2P', monospace;
+}
+
+/* Notched pixel border: four hard shadows leave the corners open */
+.px-border {
+    --w: 4px;
+    --c: var(--wood-dark);
+    box-shadow:
+        0 calc(var(--w) * -1) 0 0 var(--c),
+        0 var(--w) 0 0 var(--c),
+        calc(var(--w) * -1) 0 0 0 var(--c),
+        var(--w) 0 0 0 var(--c);
+}
+
+.px-border.drop {
+    box-shadow:
+        0 calc(var(--w) * -1) 0 0 var(--c),
+        0 var(--w) 0 0 var(--c),
+        calc(var(--w) * -1) 0 0 0 var(--c),
+        var(--w) 0 0 0 var(--c),
+        calc(var(--w) * 2) calc(var(--w) * 2) 0 0 var(--shadow);
+}
+
+/* ---------- Graph-paper page ---------- */
+.album {
+    padding: clamp(20px, 4vw, 52px) clamp(16px, 4vw, 52px);
+    background-color: var(--cream);
+    background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+.album img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.album .chip {
+    --w: 3px;
+    --c: var(--green-dark);
+    margin: 0;
+    padding: 8px 10px;
+    background: var(--green);
+    color: var(--on-green);
+    font-family: var(--pixel-font);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+/* ---------- Cover ---------- */
+.album .cover {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.album .cover h1 {
+    margin: 4px 0 0;
+    max-width: 16ch;
+    font-family: var(--hand-font);
+    font-weight: 600;
+    font-size: clamp(30px, 5.4vw, 52px);
+    line-height: 1.1;
+    color: var(--ink);
+    text-wrap: balance;
+}
+
+.album .course {
+    margin: 0;
+    font-family: var(--label-font);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.album .stamp {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 3px solid var(--green-dark);
+    color: var(--green-dark);
+    font-family: var(--label-font);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    transform: rotate(-6deg);
+    opacity: 0.85;
+}
+
+/* ---------- Parts ---------- */
+.album .part {
+    display: grid;
+    gap: 24px;
+    max-width: 900px;
+    margin: 64px auto 0;
+}
+
+.album .part-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 14px;
+}
+
+.album .part-head h2 {
+    margin: 0;
+    min-width: 0;
+    font-family: var(--hand-font);
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.15;
+    color: var(--ink);
+    text-wrap: balance;
+}
+
+.album .pair {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    justify-items: center;
+    gap: 20px;
+    padding-top: 14px;
+}
+
+/* Taped photo */
+.album .snap {
+    --w: 3px;
+    position: relative;
+    display: grid;
+    gap: 10px;
+    width: min(290px, 100%);
+    margin: 0;
+    padding: 10px 10px 12px;
+    background: var(--card);
+}
+
+.album .snap.tilt-l { transform: rotate(-1.5deg); }
+.album .snap.tilt-r { transform: rotate(1.5deg); }
+
+.album .snap::before {
+    content: "";
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    width: 86px;
+    height: 24px;
+    background: var(--tape);
+    transform: translateX(-50%) rotate(-4deg);
+}
+
+.album .snap img { width: 100%; }
+
+.album .snap figcaption {
+    font-family: var(--hand-font);
+    font-size: 19px;
+    text-align: center;
+    color: var(--ink);
+}
+
+.album .vs {
+    --w: 3px;
+    padding: 12px 10px;
+    background: var(--wood);
+    color: var(--cream);
+    font-family: var(--pixel-font);
+    font-size: 12px;
+}
+
+.album .note {
+    max-width: 62ch;
+    margin: 0 auto;
+    padding-left: 18px;
+    border-left: 4px dashed var(--green);
+    color: var(--ink);
+}
+
+/* Film strip around the dolly zoom, with sprocket holes along the top and bottom */
+.album .film {
+    position: relative;
+    justify-self: center;
+    width: min(440px, 100%);
+    padding: 26px 14px;
+    background: var(--wood-dark);
+}
+
+.album .film::before,
+.album .film::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 10px;
+    background: repeating-linear-gradient(90deg, var(--cream) 0 10px, transparent 10px 22px);
+}
+
+.album .film::before { top: 8px; }
+.album .film::after { bottom: 8px; }
+
+.album .film img { width: 100%; }
+
+.album .sticker {
+    --w: 3px;
+    justify-self: center;
+    margin: 0;
+    padding: 6px 14px;
+    background: var(--card);
+    font-family: var(--hand-font);
+    font-size: 20px;
+    transform: rotate(2deg);
+}
+
+@media (max-width: 640px) {
+    .album .pair { grid-template-columns: 1fr; }
+    .album .stamp { position: static; justify-self: end; }
+}
+
+@media print {
+    .album .part-head {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+
+    .album .pair,
+    .album .note,
+    .album .film,
+    .album .sticker {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

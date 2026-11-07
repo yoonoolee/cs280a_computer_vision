@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Avery's CS 280A Project 0</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Press+Start+2P&family=VT323&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@600&family=Press+Start+2P&family=Silkscreen&family=VT323&display=block" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="project0.css">
 </head>
 <body class="p0">
     <nav class="site-nav">
@@ -21,76 +23,44 @@
     </nav>
 
     <main>
-        <div class="panel">
-            <div class="hero">
-                <h1>UC Berkeley CS 280A<br>Computer Vision and Computational Photography</h1>
-                <p class="project-label">Project 0</p>
-                <h2 class="project-title">Becoming Friends with Your Camera</h2>
-                <p class="date">September 1, 2026</p>
-            </div>
+        <div class="album px-border drop">
+            <header class="cover">
+                <p class="chip px-border">PROJECT 0</p>
+                <h1>Becoming Friends with Your Camera</h1>
+                <p class="course">UC Berkeley CS 280A &middot; Computer Vision and Computational Photography</p>
+                <p class="stamp"><time datetime="2026-09-01">SEP &middot; 01 &middot; 2026</time></p>
+            </header>
 
-            <h2 class="part-title typewriter">Part 1: Selfie: The Wrong Way vs. The Right Way</h2>
-            <div class="gallery">
-                <img src="images/cs280a_proj0_part1_pic1.jpg" alt="Part 1 photo 1">
-                <img src="images/cs280a_proj0_part1_pic2.jpg" alt="Part 1 photo 2">
-            </div>
-            <p class="answer">For the first photo the camera was close to my face and not zoomed in. The features that are closer to the camera like my nose look bigger, while the top of my head look pushed back and squished down. For the second photo the camera was farther away and zoomed in, so all my features are about the same distance from the camera and look even and natural.</p>
+            <section class="part">
+                <div class="part-head"><span class="chip px-border">PART 1</span><h2>Selfie: The Wrong Way vs. The Right Way</h2></div>
+                <div class="pair">
+                    <figure class="snap tilt-l px-border drop"><img src="images/cs280a_proj0_part1_pic1.jpg" width="2755" height="3677" alt="Selfie taken close to the face without zoom"><figcaption>up close, no zoom</figcaption></figure>
+                    <span class="vs px-border">VS</span>
+                    <figure class="snap tilt-r px-border drop"><img src="images/cs280a_proj0_part1_pic2.jpg" width="2563" height="3414" alt="Selfie taken from farther away, zoomed in"><figcaption>far away, zoomed in</figcaption></figure>
+                </div>
+                <p class="note">For the first photo the camera was close to my face and not zoomed in. The features that are closer to the camera like my nose look bigger, while the top of my head look pushed back and squished down. For the second photo the camera was farther away and zoomed in, so all my features are about the same distance from the camera and look even and natural.</p>
+            </section>
 
-            <h2 class="part-title typewriter">Part 2: Architectural Perspective Compression</h2>
-            <div class="gallery">
-                <img src="images/cs280a_proj0_part2_pic1.jpg" alt="Part 2 photo 1">
-                <img src="images/cs280a_proj0_part2_pic2.jpg" alt="Part 2 photo 2">
-            </div>
-            <p class="answer">For the first photo the camera was farther away and zoomed in, so the columns all look closer in size and the building looks flatter. For the second photo the camera was close to the building and not zoomed in, so the columns closest to the camera look much bigger than the ones farther down the building.</p>
+            <section class="part">
+                <div class="part-head"><span class="chip px-border">PART 2</span><h2>Architectural Perspective Compression</h2></div>
+                <div class="pair">
+                    <figure class="snap tilt-l px-border drop"><img src="images/cs280a_proj0_part2_pic1.jpg" width="3024" height="4032" alt="Building photographed from far away, zoomed in"><figcaption>far away, zoomed in</figcaption></figure>
+                    <span class="vs px-border">VS</span>
+                    <figure class="snap tilt-r px-border drop"><img src="images/cs280a_proj0_part2_pic2.jpg" width="4041" height="5393" alt="Building photographed up close without zoom"><figcaption>up close, no zoom</figcaption></figure>
+                </div>
+                <p class="note">For the first photo the camera was farther away and zoomed in, so the columns all look closer in size and the building looks flatter. For the second photo the camera was close to the building and not zoomed in, so the columns closest to the camera look much bigger than the ones farther down the building.</p>
+            </section>
 
-            <h2 class="part-title typewriter">Part 3: The Dolly Zoom</h2>
-            <div class="gif-wrap">
-                <img src="images/cs280a_proj0_part3.gif" alt="Part 3 dolly zoom animation">
-            </div>
-            <p class="caption">Meet bebybean :)</p>
+            <section class="part">
+                <div class="part-head"><span class="chip px-border">PART 3</span><h2>The Dolly Zoom</h2></div>
+                <div class="film"><img src="images/cs280a_proj0_part3.gif" width="500" height="667" alt="Dolly zoom animation of a stuffed animal named bebybean"></div>
+                <p class="sticker px-border">Meet bebybean :)</p>
+            </section>
         </div>
     </main>
 
     <footer class="site-footer">
         <a href="https://github.com/yoonoolee/cs280a_computer_vision" target="_blank" rel="noopener">GitHub</a>
     </footer>
-
-    <script>
-        function typeOut(el) {
-            const text = el.textContent;
-            document.fonts.ready.then(() => {
-                const cursor = document.createElement('span');
-                cursor.className = 'blink';
-                cursor.textContent = '_';
-
-                el.textContent = text;
-                el.appendChild(cursor);
-                el.style.width = el.getBoundingClientRect().width + 'px';
-                el.textContent = '';
-
-                let i = 0;
-                function step() {
-                    el.textContent = text.slice(0, i + 1);
-                    el.appendChild(cursor);
-                    i++;
-                    if (i < text.length) {
-                        setTimeout(step, 60);
-                    }
-                }
-                step();
-            });
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    observer.unobserve(entry.target);
-                    typeOut(entry.target);
-                }
-            });
-        }, { threshold: 0.4 });
-
-        document.querySelectorAll('.typewriter').forEach((el) => observer.observe(el));
-    </script>
 </body>
 </html>
